@@ -1,0 +1,395 @@
+{
+  "name": "AutoBiz SaaS - Template de Automação Completa",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-entrada",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "responseData": "allEntries"
+      },
+      "name": "Webhook Entrada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "auto-generated"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.type}}",
+              "operation": "equal",
+              "value2": "whatsapp_message"
+            }
+          ]
+        }
+      },
+      "name": "É Mensagem WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-3.5-turbo",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "system",
+              "content": "Você é um assistente de atendimento para o negócio {{$json.body.business_name || 'este negócio'}}. Tipo de negócio: {{$json.body.business_type || 'geral'}}. Responda de forma educada e profissional. Se o cliente quiser agendar algo, pergunte nome, telefone e horário preferido. Se quiser fazer orçamento, colete informações básicas. Sempre mantenha o tom amigável e ofereça ajuda."
+            },
+            {
+              "role": "user",
+              "content": "={{$json.body.message}}"
+            }
+          ]
+        },
+        "temperature": 0.7,
+        "maxTokens": 300
+      },
+      "name": "IA - Resposta Personalizada",
+      "type": "n8n-nodes-base.openai",
+      "typeVersion": 1,
+      "position": [600, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.body.whatsapp_webhook_url}}",
+        "method": "POST",
+        "headers": {},
+        "body": {
+          "phone": "={{$json.body.customer_phone}}",
+          "message": "={{$node['IA - Resposta Personalizada'].json.choices[0].message.content}}"
+        }
+      },
+      "name": "Enviar Resposta WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [800, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.message.toLowerCase()}}",
+              "operation": "contains",
+              "value2": "agendar"
+            }
+          ]
+        }
+      },
+      "name": "Quer Agendar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "calendarId": "={{$json.body.google_calendar_id || 'primary'}}",
+        "summary": "Agendamento - {{$json.body.customer_name || 'Cliente'}}",
+        "description": "Agendamento via WhatsApp automático\\nCliente: {{$json.body.customer_name}}\\nTelefone: {{$json.body.customer_phone}}\\nMensagem: {{$json.body.message}}",
+        "start": {
+          "dateTime": "={{$json.body.appointment_datetime || new Date(Date.now() + 24*60*60*1000).toISOString()}}"
+        },
+        "end": {
+          "dateTime": "={{$json.body.appointment_end_datetime || new Date(Date.now() + 25*60*60*1000).toISOString()}}"
+        },
+        "attendees": [
+          {
+            "email": "={{$json.body.customer_email}}"
+          }
+        ]
+      },
+      "name": "Criar Evento Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [1000, 250]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "={{$json.body.google_sheet_id}}",
+        "range": "Leads!A:H",
+        "valueInputMode": "RAW",
+        "values": [
+          [
+            "={{$json.body.customer_name || 'N/A'}}",
+            "={{$json.body.customer_phone}}",
+            "={{$json.body.customer_email || 'N/A'}}",
+            "={{$json.body.message}}",
+            "={{$json.body.type}}",
+            "={{new Date().toISOString()}}",
+            "={{$json.body.business_name}}",
+            "={{$node['IA - Resposta Personalizada'].json.choices[0].message.content}}"
+          ]
+        ]
+      },
+      "name": "Salvar Lead Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [600, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.type}}",
+              "operation": "equal",
+              "value2": "quotation_request"
+            }
+          ]
+        }
+      },
+      "name": "É Pedido de Orçamento?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [400, 500]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$json.body.company_email || 'atendimento@autobiz.com'}}",
+        "toEmail": "={{$json.body.customer_email}}",
+        "subject": "Orçamento Solicitado - {{$json.body.business_name}}",
+        "text": "Olá {{$json.body.customer_name}},\\n\\nRecebemos sua solicitação de orçamento!\\n\\nDetalhes do projeto:\\n- Tipo: {{$json.body.project_type}}\\n- Valor estimado: R$ {{$json.body.estimated_price}}\\n\\nEm breve entraremos em contato para detalhar seu projeto.\\n\\nAtenciosamente,\\n{{$json.body.business_name}}"
+      },
+      "name": "Enviar E-mail Orçamento",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [600, 500]
+    },
+    {
+      "parameters": {
+        "url": "{{$json.body.admin_notification_url}}",
+        "method": "POST",
+        "headers": {},
+        "body": {
+          "type": "new_quotation",
+          "customer_name": "={{$json.body.customer_name}}",
+          "customer_email": "={{$json.body.customer_email}}",
+          "estimated_price": "={{$json.body.estimated_price}}",
+          "business_name": "={{$json.body.business_name}}",
+          "timestamp": "={{new Date().toISOString()}}"
+        }
+      },
+      "name": "Notificar Admin - Novo Orçamento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [800, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.type}}",
+              "operation": "equal",
+              "value2": "payment_confirmed"
+            }
+          ]
+        }
+      },
+      "name": "Pagamento Confirmado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [400, 700]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$json.body.company_email}}",
+        "toEmail": "={{$json.body.customer_email}}",
+        "subject": "Pagamento Confirmado - {{$json.body.business_name}}",
+        "text": "Olá {{$json.body.customer_name}},\\n\\nSeu pagamento de R$ {{$json.body.amount}} foi confirmado com sucesso!\\n\\nPróximos passos:\\n1. Iniciaremos o desenvolvimento do seu projeto\\n2. Você receberá atualizações por e-mail\\n3. Prazo estimado: {{$json.body.estimated_delivery}}\\n\\nObrigado pela confiança!\\n\\n{{$json.body.business_name}}"
+      },
+      "name": "E-mail Confirmação Pagamento",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [600, 700]
+    },
+    {
+      "parameters": {
+        "url": "{{$json.body.admin_notification_url}}",
+        "method": "POST",
+        "headers": {},
+        "body": {
+          "type": "payment_received",
+          "customer_name": "={{$json.body.customer_name}}",
+          "amount": "={{$json.body.amount}}",
+          "project_type": "={{$json.body.project_type}}",
+          "business_name": "={{$json.body.business_name}}",
+          "timestamp": "={{new Date().toISOString()}}"
+        }
+      },
+      "name": "Notificar Admin - Pagamento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [800, 700]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "success": true,
+          "message": "Automação processada com sucesso",
+          "timestamp": "={{new Date().toISOString()}}",
+          "processed_type": "={{$json.body.type}}"
+        }
+      },
+      "name": "Resposta Final",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1000, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Entrada": {
+      "main": [
+        [
+          {
+            "node": "É Mensagem WhatsApp?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "É Pedido de Orçamento?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pagamento Confirmado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Mensagem WhatsApp?": {
+      "main": [
+        [
+          {
+            "node": "IA - Resposta Personalizada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA - Resposta Personalizada": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resposta WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Quer Agendar?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Salvar Lead Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quer Agendar?": {
+      "main": [
+        [
+          {
+            "node": "Criar Evento Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Pedido de Orçamento?": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail Orçamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar E-mail Orçamento": {
+      "main": [
+        [
+          {
+            "node": "Notificar Admin - Novo Orçamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagamento Confirmado?": {
+      "main": [
+        [
+          {
+            "node": "E-mail Confirmação Pagamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E-mail Confirmação Pagamento": {
+      "main": [
+        [
+          {
+            "node": "Notificar Admin - Pagamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Lead Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Resposta Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar Admin - Novo Orçamento": {
+      "main": [
+        [
+          {
+            "node": "Resposta Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar Admin - Pagamento": {
+      "main": [
+        [
+          {
+            "node": "Resposta Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "createdAt": "2024-01-15T00:00:00.000Z",
+  "updatedAt": "2024-01-15T00:00:00.000Z",
+  "tags": ["automation", "saas", "whatsapp", "ai", "quotation"]
+}
