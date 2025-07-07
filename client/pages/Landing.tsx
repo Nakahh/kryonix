@@ -47,7 +47,7 @@ const Landing = () => {
       icon: <MessageSquare className="h-8 w-8 text-green-600" />,
       title: "Automação com IA",
       description:
-        "WhatsApp automático, chatbots inteligentes e automação de processos.",
+        "WhatsApp autom��tico, chatbots inteligentes e automação de processos.",
     },
     {
       icon: <Cpu className="h-8 w-8 text-purple-600" />,
@@ -313,7 +313,7 @@ const Landing = () => {
                 Criamos soluções digitais que transformam negócios e melhoram a
                 vida das pessoas. Liderada por{" "}
                 <strong>Vitor Jayme Fernandes Ferreira</strong>, nossa equipe
-                combina expertise técnica com visão estratégica para entregar
+                combina expertise técnica com vis��o estratégica para entregar
                 projetos que superam expectativas.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
@@ -621,23 +621,38 @@ const Landing = () => {
       </section>
 
       {/* CTA Final */}
-      <section className="py-20 bg-blue-600">
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
-            Pronto Para Automatizar Seu Negócio?
+            Pronto para transformar sua ideia em realidade?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Junte-se a milhares de empresários que já automatizaram seus
-            negócios e aumentaram suas vendas.
+            Entre em contato conosco e vamos conversar sobre seu próximo
+            projeto. Transformamos ideias em soluções digitais de sucesso.
           </p>
-          <Button
-            size="lg"
-            variant="secondary"
-            className="text-lg px-8 py-3"
-            onClick={() => navigate("/register")}
-          >
-            Começar Agora - Grátis por 7 Dias
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8 py-3"
+              onClick={() =>
+                window.open("https://wa.me/5517981805327", "_blank")
+              }
+            >
+              <MessageSquare className="mr-2 h-5 w-5" />
+              WhatsApp: (17) 9 8180-5327
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600"
+              onClick={() =>
+                window.open("https://instagram.com/kryon.ix", "_blank")
+              }
+            >
+              Instagram: @kryon.ix
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -646,77 +661,97 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Zap className="h-8 w-8 text-blue-400" />
-                <span className="text-2xl font-bold">AutoBiz</span>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <span className="text-2xl font-bold">KRYONIX</span>
+                  <p className="text-xs text-gray-400">Tecnologia de Ponta</p>
+                </div>
               </div>
-              <p className="text-gray-400">
-                Automatize seu negócio com inteligência artificial.
+              <p className="text-gray-400 mb-4">
+                Transformando ideias em soluções digitais inovadoras.
+                Desenvolvimento de software de alta qualidade.
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Produto</h3>
+              <h3 className="text-lg font-semibold mb-4">Serviços</h3>
               <ul className="space-y-2 text-gray-400">
+                <li>Desenvolvimento Web</li>
+                <li>Aplicativos Mobile</li>
+                <li>Inteligência Artificial</li>
+                <li>Automação</li>
+                <li>DevOps & Cloud</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Contato</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>(17) 9 8180-5327</li>
                 <li>
-                  <a href="#" className="hover:text-white">
-                    Funcionalidades
+                  <a
+                    href="https://wa.me/5517981805327"
+                    className="hover:text-white transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
-                    Preços
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    Integrações
+                  <a
+                    href="https://instagram.com/kryon.ix"
+                    className="hover:text-white transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @kryon.ix
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Suporte</h3>
+              <h3 className="text-lg font-semibold mb-4">Links Rápidos</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
-                    Central de Ajuda
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    Contato
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    Status
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Empresa</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white">
+                  <a
+                    href="#sobre"
+                    className="hover:text-white transition-colors"
+                  >
                     Sobre
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
-                    Blog
+                  <a
+                    href="#servicos"
+                    className="hover:text-white transition-colors"
+                  >
+                    Serviços
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
-                    Carreira
+                  <a
+                    href="#depoimentos"
+                    className="hover:text-white transition-colors"
+                  >
+                    Depoimentos
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/dashboard"
+                    className="hover:text-white transition-colors"
+                  >
+                    Dashboard
                   </a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 AutoBiz. Todos os direitos reservados.</p>
+            <p>&copy; 2024 Kryonix. Todos os direitos reservados.</p>
+            <p className="mt-2 text-sm">CEO: Vitor Jayme Fernandes Ferreira</p>
           </div>
         </div>
       </footer>
