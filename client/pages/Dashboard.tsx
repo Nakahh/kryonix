@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   MessageSquare,
   Calendar,
@@ -23,7 +25,19 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  Bot,
+  Users,
+  TrendingUp,
+  Wifi,
+  WifiOff,
+  Code,
+  Play,
+  Pause,
+  RefreshCw,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [user, setUser] = useState({
