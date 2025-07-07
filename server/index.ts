@@ -57,6 +57,19 @@ export function createServer() {
   app.patch("/api/quotations/:id", handleUpdateQuotationStatus);
   app.post("/api/quotations/calculate", handleCalculatePrice);
 
+  // Configuration routes
+  app.post("/api/admin/config", handleSaveConfig);
+  app.get("/api/admin/config", handleGetConfig);
+  app.get("/api/system/status", handleGetSystemStatus);
+
+  // API Testing routes
+  app.post("/api/test/openai", handleTestOpenAI);
+  app.post("/api/test/google", handleTestGoogle);
+  app.post("/api/test/stripe", handleTestStripe);
+  app.post("/api/test/resend", handleTestResend);
+  app.post("/api/test/n8n", handleTestN8N);
+  app.post("/api/test/whatsapp", handleTestWhatsApp);
+
   // Dashboard routes
   app.get("/api/dashboard/metrics", async (req, res) => {
     try {
