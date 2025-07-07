@@ -262,17 +262,17 @@ const Landing = () => {
               Desenvolvimento de software de alta qualidade
             </div>
           </div>
-          <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
             Transformando ideias em
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block mt-2">
               soluções digitais
             </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
             Especialistas em React, Node.js, IA e automação. Criamos soluções
             digitais que transformam negócios e melhoram a vida das pessoas.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Button
               size="lg"
               className="text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
