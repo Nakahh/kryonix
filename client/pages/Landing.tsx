@@ -398,29 +398,91 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 bg-gray-50">
+      {/* Serviços */}
+      <section id="servicos" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
-            Tudo que Você Precisa em Uma Plataforma
-          </h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Nossos Serviços
+            </h2>
+            <p className="text-xl text-gray-600">
+              Soluções completas para seu negócio digital
+            </p>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+            {services.map((service, index) => (
               <Card
                 key={index}
-                className="h-full hover:shadow-lg transition-shadow"
+                className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
               >
                 <CardHeader>
-                  <div className="mb-4">{feature.icon}</div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <div className="mb-4">{service.icon}</div>
+                  <CardTitle className="text-xl">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    {feature.description}
+                    {service.description}
                   </CardDescription>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CEO Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Conheça nosso CEO
+            </h2>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <Card className="overflow-hidden shadow-xl">
+              <div className="grid md:grid-cols-2">
+                <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 text-white flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-32 h-32 bg-white/20 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <Users className="h-16 w-16 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Vitor Jayme</h3>
+                    <p className="text-blue-100">CEO Kryonix</p>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Vitor Jayme Fernandes Ferreira
+                  </h3>
+                  <p className="text-blue-600 font-semibold mb-4">
+                    CEO & Founder
+                  </p>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    Desenvolvedor Full Stack especialista em React, Node.js e
+                    Inteligência Artificial. Apaixonado por criar soluções
+                    inovadoras que transformam negócios.
+                  </p>
+                  <div className="flex space-x-4">
+                    <Button
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() =>
+                        window.open("https://wa.me/5517981805327", "_blank")
+                      }
+                    >
+                      WhatsApp
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        window.open("https://instagram.com/kryon.ix", "_blank")
+                      }
+                    >
+                      Instagram
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
