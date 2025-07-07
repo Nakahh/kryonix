@@ -274,7 +274,8 @@ const Landing = () => {
       price: 147,
       originalPrice: 497,
       period: "/mês",
-      description: "🧠 INTELIGÊNCIA ARTIFICIAL PREDITIVA - Antecipa tendências",
+      description:
+        "🧠 INTELIG��NCIA ARTIFICIAL PREDITIVA - Antecipa tendências",
       features: [
         "Machine Learning personalizado",
         "Previsão de vendas com 94% precisão",
@@ -464,7 +465,7 @@ const Landing = () => {
     "Prestadores de Serviços",
     "Academias e Personal Trainers",
     "Advogados e Contadores",
-    "Corretores de Imóveis",
+    "Corretores de Im��veis",
   ];
 
   // Loading Screen
@@ -889,14 +890,59 @@ const Landing = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               🚀 Monte Sua Plataforma de Automação
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              <strong>OFERTA LIMITADA:</strong> Construa seu plano personalizado
-              e comece com 7 dias grátis. Descontos de até 47% por tempo
-              limitado!
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+              <strong className="text-red-600">OFERTA RELÂMPAGO:</strong>{" "}
+              Construa seu plano personalizado com até{" "}
+              <strong className="text-green-600">70% OFF</strong> + teste de 14
+              dias grátis.
+              <br />
+              Mais de <strong>2.847 empresas</strong> já transformaram seus
+              negócios!
             </p>
-            <div className="mt-4 inline-flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-semibold">
-              <Clock className="w-4 h-4 mr-2" />
-              Promoção válida até o fim do mês!
+
+            {/* Timer de Urgência */}
+            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-2xl max-w-2xl mx-auto mb-6 shadow-2xl">
+              <h3 className="text-2xl font-bold mb-2">⏰ OFERTA EXPIRA EM:</h3>
+              <div className="flex justify-center space-x-4 text-center">
+                <div className="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl">
+                  <div className="text-3xl font-bold">
+                    {String(timeLeft.hours).padStart(2, "0")}
+                  </div>
+                  <div className="text-sm">HORAS</div>
+                </div>
+                <div className="text-3xl font-bold self-center">:</div>
+                <div className="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl">
+                  <div className="text-3xl font-bold">
+                    {String(timeLeft.minutes).padStart(2, "0")}
+                  </div>
+                  <div className="text-sm">MIN</div>
+                </div>
+                <div className="text-3xl font-bold self-center">:</div>
+                <div className="bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl">
+                  <div className="text-3xl font-bold">
+                    {String(timeLeft.seconds).padStart(2, "0")}
+                  </div>
+                  <div className="text-sm">SEG</div>
+                </div>
+              </div>
+              <p className="text-sm mt-3 opacity-90">
+                🔥 Após o prazo, volta ao preço normal (até 300% mais caro)
+              </p>
+            </div>
+
+            {/* Badges de Prova Social */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+                <Award className="w-4 h-4 mr-2" />⭐ 4.9/5 - 1.247 avaliações
+              </div>
+              <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+                <Shield className="w-4 h-4 mr-2" />
+                🔒 Garantia 60 dias
+              </div>
+              <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+                <Users className="w-4 h-4 mr-2" />
+                👥 2.847+ empresas ativas
+              </div>
             </div>
           </div>
 
