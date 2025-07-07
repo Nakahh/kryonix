@@ -1,320 +1,254 @@
 # 🚀 KRYONIX - Plataforma SaaS de Automação com IA
 
-Uma plataforma completa para automatizar negócios com Inteligência Artificial, WhatsApp, e-mail, agendamentos e muito mais.
+Uma plataforma completa de automação empresarial com inteligência artificial, WhatsApp Business, integrações avançadas e workflows automáticos.
 
-## ✨ Características Principais
+## 🌟 Características Principais
 
-- **🤖 IA Personalizada**: Configure prompts específicos para seu negócio
-- **📱 WhatsApp Automático**: Conecte via QR Code e responda clientes 24/7
-- **📧 E-mail Marketing**: Campanhas automáticas e follow-up de leads
-- **📅 Agendamentos**: Integração com Google Calendar
-- **💰 Pagamentos**: PIX, cartão e boleto via Stripe
-- **📊 Dashboard Moderno**: Interface estilo Power BI
-- **🔧 Configuração Visual**: Tudo pelo dashboard, sem código
-- **📱 Chat Embed**: Adicione no seu site em 1 clique
-- **📈 Relatórios PDF**: Geração automática de relatórios
+- ✅ **Consultora IA Integrada** - Recomenda módulos personalizados
+- ✅ **WhatsApp Business Premium** - Automação completa de leads
+- ✅ **Meta Business Integration** - Instagram + Facebook automático
+- ✅ **N8N Automation** - Workflows empresariais avançados
+- ✅ **CRM Inteligente** - Gestão de clientes com IA
+- ✅ **Voice AI Assistant** - Atendimento telefônico automatizado
+- ✅ **Dashboard Analytics** - Métricas em tempo real
+- ✅ **Sistema Modular** - Pague apenas pelo que usar
 
-## 🎯 Para Quem É
-
-- **Clínicas e Consultórios**: Agendamentos automáticos
-- **Salões de Beleza**: Confirmações e lembretes
-- **Restaurantes**: Pedidos e reservas pelo WhatsApp
-- **Lojas Online**: Atendimento e vendas automatizadas
-- **Prestadores de Serviços**: Orçamentos e agendamentos
-- **Qualquer Negócio**: Automação personalizada
-
-## 🚀 Instalação Rápida
-
-### 1. Pré-requisitos
+## 🎯 Deploy Rápido (3 comandos)
 
 ```bash
-# Instale Node.js 18+
-# Instale Docker e Docker Compose
-# Clone o repositório
-git clone https://github.com/seu-usuario/kryonix-saas
-cd kryonix-saas
-```
+# 1. Clone o projeto
+git clone <seu-repositorio> kryonix && cd kryonix
 
-### 2. Configuração do Ambiente
-
-```bash
-# Copie o arquivo de exemplo
+# 2. Configure as variáveis (edite o .env)
 cp .env.example .env
 
-# Edite com suas chaves de API (será configurado pelo dashboard)
-nano .env
+# 3. Execute o deploy automatizado
+bash deploy.sh
 ```
 
-### 3. Inicie o Sistema
+## 💻 Deploy Manual Local
+
+### Pré-requisitos
+
+- Node.js 18+
+- Docker & Docker Compose
+- Git
+
+### Instalação
 
 ```bash
-# Suba todos os serviços
+# 1. Clone e instale dependências
+git clone <repositorio> kryonix
+cd kryonix
+npm install
+
+# 2. Configure ambiente
+cp .env.example .env
+# Edite o .env com suas chaves de API
+
+# 3. Inicie serviços
 docker-compose up -d
-
-# Aguarde alguns segundos e acesse:
-# Frontend: http://localhost:3000
-# N8N: http://localhost:5678
-# Admin: http://localhost:3000/admin?token=admin-secret-2024
+npm run dev
 ```
 
-## 🔧 URLs de Acesso
+### URLs de Acesso
 
-| Serviço            | URL                                                 | Credenciais            |
-| ------------------ | --------------------------------------------------- | ---------------------- |
-| **Site Principal** | http://localhost:3000                               | -                      |
-| **Dashboard**      | http://localhost:3000/dashboard                     | Faça login             |
-| **Configurações**  | http://localhost:3000/settings                      | Painel admin           |
-| **Gerador Embed**  | http://localhost:3000/embed                         | Código do chat         |
-| **N8N Workflows**  | http://localhost:5678                               | admin / admin_n8n_2024 |
-| **Admin Secreto**  | http://localhost:3000/admin?token=admin-secret-2024 | Token especial         |
+- **App Principal**: http://localhost:3001
+- **Admin Panel**: http://localhost:3001/admin?token=admin-secret-2024
+- **N8N Workflows**: http://localhost:5678 (admin/admin123)
+- **PgAdmin**: http://localhost:5050 (admin@kryonix.com/admin123)
 
-## 📋 Configuração Pelo Dashboard
+## 🌩️ Deploy na AWS EC2 (Grátis)
 
-### 1. Acesse as Configurações
+### Tutorial Completo
 
-1. Vá para http://localhost:3000/settings
-2. Configure uma por uma as integrações
-3. Teste cada conexão com o botão "Testar"
+Veja o arquivo [DEPLOY_TUTORIAL.md](./DEPLOY_TUTORIAL.md) para instruções completas de deploy na AWS EC2 com tier gratuito.
 
-### 2. APIs Necessárias (Todas Gratuitas)
+### Resumo Rápido
 
-#### 🤖 OpenAI (IA)
+1. **Criar instância EC2** (t2.micro - grátis)
+2. **SSH na instância**: `ssh -i key.pem ubuntu@IP`
+3. **Clonar projeto**: `git clone <repo> && cd kryonix`
+4. **Executar deploy**: `bash deploy.sh`
 
-1. Acesse [platform.openai.com](https://platform.openai.com)
-2. Crie uma conta e vá em "API Keys"
-3. Gere uma nova chave
-4. Cole no campo "OpenAI API Key"
-5. Clique em "Testar"
+## 🔧 Configuração de APIs
 
-#### 📊 Google APIs (Calendar + Sheets)
-
-1. Vá para [console.cloud.google.com](https://console.cloud.google.com)
-2. Crie um novo projeto
-3. Ative as APIs:
-   - Google Calendar API
-   - Google Sheets API
-4. Crie credenciais OAuth 2.0
-5. Cole Client ID e Client Secret
-6. Teste a conexão
-
-#### 💳 Stripe (Pagamentos)
-
-1. Acesse [dashboard.stripe.com](https://dashboard.stripe.com)
-2. Vá em "Developers" > "API keys"
-3. Copie a "Secret key" (test mode)
-4. Configure webhook para pagamentos
-5. Cole no dashboard e teste
-
-#### 📧 Resend (E-mails)
-
-1. Vá para [resend.com](https://resend.com)
-2. Crie uma conta gratuita
-3. Gere uma API Key
-4. Cole no dashboard
-5. Teste o envio
-
-### 3. Configure o N8N
-
-1. Acesse http://localhost:5678
-2. Faça login com `admin` / `admin_n8n_2024`
-3. Importe o workflow de `n8n-workflows/saas-automation-template.json`
-4. Configure as credenciais (OpenAI, Google, etc)
-5. Ative o workflow
-6. Copie a URL do webhook gerada
-
-## 🎨 Personalizando Seu Chat
-
-### 1. Gerador de Código
-
-1. Acesse http://localhost:3000/embed
-2. Configure:
-   - Nome do seu negócio
-   - Mensagem de boas-vindas
-   - Cores e posição
-   - Horários de funcionamento
-3. Clique em "Gerar Código"
-4. Copie e cole no seu site
-
-### 2. Exemplo de Código Gerado
-
-```html
-<!-- KRYONIX Chat Widget -->
-<div id="kryonix-chat-widget"></div>
-<script>
-  window.KryonixChatConfig = {
-    businessName: "Minha Empresa",
-    welcomeMessage: "Olá! Como posso ajudar?",
-    primaryColor: "#3B82F6",
-    position: "bottom-right",
-  };
-  // Script de carregamento automático
-</script>
-<!-- Fim KRYONIX Chat Widget -->
-```
-
-## 📱 WhatsApp - Conexão Rápida
-
-### 1. No Dashboard
-
-1. Vá para a seção "WhatsApp Business"
-2. Clique em "Conectar"
-3. Escaneie o QR Code com seu WhatsApp
-4. Aguarde confirmação
-5. Teste enviando uma mensagem
-
-### 2. Configurar Respostas
-
-1. Configure o prompt da IA na seção "IA Personalizada"
-2. Exemplo para clínica:
-
-```
-Você é assistente da Clínica Saúde Total.
-Responda perguntas sobre consultas,
-agende horários e seja sempre educado.
-Horários: Segunda a Sexta das 8h às 18h.
-```
-
-## 📊 Relatórios e Métricas
-
-### Dashboard Automático
-
-O dashboard mostra em tempo real:
-
-- **Mensagens processadas** este mês
-- **Leads capturados** via chat
-- **Agendamentos** confirmados
-- **Receita gerada** via automação
-- **Taxa de conversão** de leads
-- **Tempo médio** de resposta
-
-### Relatórios PDF
-
-1. Clique em "Gerar Relatório PDF"
-2. Escolha o período
-3. Download automático com:
-   - Resumo de atividades
-   - Gráficos de performance
-   - Lista de leads e conversões
-
-## 🔒 Segurança e Backup
-
-### Configurações Seguras
+### APIs Obrigatórias
 
 ```bash
-# Altere senhas padrão
-docker-compose down
-# Edite docker-compose.yml com senhas fortes
-docker-compose up -d
+# OpenAI (para IA)
+OPENAI_API_KEY=sk-...
 
-# Configure backup automático do banco
-# Logs em /var/log/kryonix/
+# Resend (para emails)
+RESEND_API_KEY=re_...
+
+# Stripe (para pagamentos)
+STRIPE_SECRET_KEY=sk_test_...
 ```
 
-### Acesso Admin
-
-- URL: `/admin?token=admin-secret-2024`
-- **IMPORTANTE**: Altere o token em produção
-- Monitore: usuários, pagamentos, erros
-- Notificações via Discord/Slack
-
-## 🆘 Resolução de Problemas
-
-### N8N não conecta
+### APIs Opcionais
 
 ```bash
-docker-compose logs n8n
-# Verifique se está rodando na porta 5678
-curl http://localhost:5678/healthz
+# Google (Calendar/Drive)
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# Meta (Instagram/Facebook)
+META_APP_ID=...
+META_APP_SECRET=...
 ```
 
-### WhatsApp desconecta
+## 🤖 Como Funciona a IA Consultant
 
-1. Gere novo QR Code no dashboard
-2. Escaneie novamente
-3. Verifique logs do WppConnect
+A IA analisa a descrição do negócio e recomenda módulos automaticamente:
 
-### OpenAI não responde
+1. **Cliente descreve negócio**: "Tenho uma clínica com 3 dentistas"
+2. **IA processa e pergunta**: "Quantos pacientes atendem por dia?"
+3. **IA recomenda módulos**: WhatsApp + Calendar + CRM + Voice AI
+4. **Cliente vê plano personalizado** com preços
 
-1. Verifique créditos na conta OpenAI
-2. Teste API Key no dashboard
-3. Monitore rate limits
+### Exemplos de Uso
 
-### Erro de banco de dados
+```
+🏥 "Clínica odontológica" → WhatsApp + Calendar + CRM
+🍽️ "Restaurante 20 mesas" → WhatsApp + Meta + Email
+🛍️ "Loja online" → WhatsApp + Meta + IA Analytics + CRM
+💇 "Salão de beleza" → WhatsApp + Calendar + Meta + Email
+```
+
+## 📊 Módulos Disponíveis
+
+| Módulo                    | Preço/mês | Funcionalidade                  |
+| ------------------------- | --------- | ------------------------------- |
+| WhatsApp Business Premium | R$ 105    | Automação completa de leads     |
+| Meta Business Integration | R$ 168    | Instagram + Facebook automático |
+| Google Calendar Pro       | R$ 63     | Agendamentos automáticos        |
+| N8N Automation Premium    | R$ 126    | Workflows empresariais          |
+| IA Advanced Analytics     | R$ 147    | Análise preditiva com IA        |
+| E-mail Marketing Pro      | R$ 84     | Campanhas automatizadas         |
+| CRM Inteligente           | R$ 105    | Gestão de clientes com IA       |
+| Chatbot IA Avançado       | R$ 126    | Atendimento 24/7                |
+| Lead Generation Turbo     | R$ 147    | Geração automática de leads     |
+| Voice AI Assistant        | R$ 189    | Atendimento telefônico IA       |
+
+## 🎨 Estrutura do Projeto
+
+```
+kryonix/
+├── client/                 # Frontend React
+│   ├── pages/             # Páginas da aplicação
+│   ├── components/        # Componentes reutilizáveis
+│   └── lib/              # Utilitários
+├── server/                # Backend Node.js
+│   ├── routes/           # Rotas da API
+│   └── prisma/           # Schema do banco
+├── docker-compose.yml    # Serviços (PostgreSQL, N8N)
+├── deploy.sh            # Script de deploy automático
+└── DEPLOY_TUTORIAL.md   # Tutorial completo AWS
+```
+
+## 🔐 Segurança
+
+- ✅ **Autenticação JWT** para usuários
+- ✅ **Token de admin** para painel administrativo
+- ✅ **Validação de entrada** em todas as rotas
+- ✅ **Rate limiting** para APIs
+- ✅ **Logs de auditoria** para ações críticas
+- ✅ **Backup automático** do banco de dados
+
+## 📱 Responsividade
+
+- ✅ **Mobile First** - Otimizado para celular
+- ✅ **Tablet** - Interface adaptada
+- ✅ **Desktop** - Experiência completa
+- ✅ **Menu Mobile** - Navegação intuitiva
+
+## 🛠️ Comandos Úteis
+
+### Desenvolvimento
 
 ```bash
-docker-compose down
-docker-compose up postgres -d
-# Aguarde 30 segundos
-docker-compose up -d
+npm run dev          # Inicia desenvolvimento
+npm run build        # Build para produção
+npm run test         # Executa testes
 ```
 
-## 🚀 Deploy em Produção
-
-### VPS Recomendado
-
-- **Mínimo**: 2GB RAM, 2 CPUs, 20GB SSD
-- **Recomendado**: 4GB RAM, 4 CPUs, 40GB SSD
-- **OS**: Ubuntu 22.04 LTS
-
-### Configuração SSL
+### Produção
 
 ```bash
-# Instale Nginx
-sudo apt install nginx certbot
-
-# Configure SSL com Let's Encrypt
-sudo certbot --nginx -d seudominio.com
-
-# Configure proxy reverso
-# /etc/nginx/sites-available/kryonix
+pm2 start ecosystem.config.js    # Inicia com PM2
+pm2 status                       # Status da aplicação
+pm2 logs                         # Ver logs
+pm2 restart all                  # Reiniciar
 ```
 
-### Monitoramento
+### Docker
 
-- **Uptime**: UptimeRobot ou similar
-- **Logs**: Centralizados via Docker
-- **Alertas**: Discord/Slack webhooks
-- **Backup**: Automático diário do PostgreSQL
+```bash
+docker-compose up -d             # Inicia serviços
+docker-compose logs postgres     # Logs do banco
+docker-compose restart n8n       # Reinicia N8N
+```
 
-## 📞 Suporte KRYONIX
+## 📈 Monitoramento
 
-**CEO**: Vitor Jayme Fernandes Ferreira
+### Métricas Disponíveis
 
+- 👥 **Usuários ativos** em tempo real
+- 💰 **Receita** e MRR (Monthly Recurring Revenue)
+- 📊 **Conversão** de leads em clientes
+- 🤖 **Workflows N8N** executados
+- 📧 **Emails** enviados
+- 📱 **WhatsApp** mensagens processadas
+
+### Health Checks
+
+- **API**: `GET /api/ping`
+- **Banco**: `GET /api/health/database`
+- **N8N**: `GET /api/health/n8n`
+
+## 🚀 Atualizações
+
+### Deploy de Atualizações
+
+```bash
+# Na instância/servidor
+cd /caminho/para/kryonix
+git pull origin main
+npm run build
+pm2 restart all
+```
+
+### Backup
+
+```bash
+# Backup automático do banco
+docker exec kryonix_postgres pg_dump -U kryonix_user kryonix > backup_$(date +%Y%m%d).sql
+```
+
+## 📞 Suporte
+
+### Desenvolvedor
+
+- **CEO**: Vitor Jayme Fernandes Ferreira
 - **WhatsApp**: (17) 9 8180-5327
 - **Instagram**: @kryon.ix
-- **E-mail**: contato@kryonix.com.br
+- **Email**: contato@kryonix.com
 
-### Comunidade
+### Documentação
 
-- **Discord**: [Link da comunidade]
-- **Documentação**: [docs.kryonix.com.br]
-- **Tutoriais**: [YouTube Channel]
+- [Tutorial AWS EC2](./DEPLOY_TUTORIAL.md)
+- [Configuração N8N](./docs/n8n-setup.md)
+- [API Reference](./docs/api.md)
 
-## 🏆 Cases de Sucesso
+## 📄 Licença
 
-### Clínica Dr. Silva
+© 2024 KRYONIX - Todos os direitos reservados.
 
-- **Resultado**: 300% mais agendamentos
-- **ROI**: Pagou o investimento em 2 semanas
-- **Automação**: 90% das consultas agendadas via WhatsApp
-
-### Loja Fashion Store
-
-- **Resultado**: R$ 50k em vendas pelo chat
-- **Conversão**: 25% dos visitantes viraram clientes
-- **Automação**: Catálogo automático via IA
-
-## 📝 Licença
-
-Este projeto é propriedade da **KRYONIX** - Todos os direitos reservados.
-
-Para licenciamento comercial, entre em contato:
-
-- **WhatsApp**: (17) 9 8180-5327
-- **E-mail**: comercial@kryonix.com.br
+Desenvolvido com ❤️ por **Vitor Jayme Fernandes Ferreira**
 
 ---
 
-**KRYONIX** - Transformando ideias em soluções digitais 🚀
+⭐ **Se este projeto te ajudou, deixe uma estrela!**
 
-_Desenvolvido com ❤️ por Vitor Jayme Fernandes Ferreira_
+🚀 **Transforme seu negócio com automação inteligente!**
