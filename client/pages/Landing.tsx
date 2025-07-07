@@ -182,57 +182,72 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img
-              src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
-              alt="KRYONIX Logo"
-              className="h-10 w-auto"
-            />
-            <div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                KRYONIX
-              </span>
-              <p className="text-xs text-gray-600">Tecnologia de Ponta</p>
+      <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <img
+                src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
+                alt="KRYONIX Logo"
+                className="h-8 sm:h-10 w-auto"
+              />
+              <div className="hidden sm:block">
+                <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  KRYONIX
+                </span>
+                <p className="text-xs text-gray-600 hidden md:block">
+                  Tecnologia de Ponta
+                </p>
+              </div>
             </div>
-          </div>
-          <nav className="hidden md:flex space-x-8">
-            <a
-              href="#sobre"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              Sobre
-            </a>
-            <a
-              href="#servicos"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              Serviços
-            </a>
-            <a
-              href="#projetos"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              Projetos
-            </a>
-            <a
-              href="#depoimentos"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              Depoimentos
-            </a>
-          </nav>
-          <div className="space-x-4">
-            <Button variant="ghost" onClick={() => navigate("/login")}>
-              Entrar
-            </Button>
-            <Button
-              onClick={() => navigate("/register")}
-              className="bg-gradient-to-r from-blue-600 to-purple-600"
-            >
-              Começar Projeto
-            </Button>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex space-x-6 xl:space-x-8">
+              <a
+                href="#sobre"
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              >
+                Sobre
+              </a>
+              <a
+                href="#servicos"
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              >
+                Serviços
+              </a>
+              <a
+                href="#projetos"
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              >
+                Projetos
+              </a>
+              <a
+                href="#depoimentos"
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              >
+                Depoimentos
+              </a>
+            </nav>
+
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/login")}
+                className="hidden sm:inline-flex"
+              >
+                Entrar
+              </Button>
+              <Button
+                onClick={() => navigate("/register")}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-sm sm:text-base px-3 sm:px-4"
+                size="sm"
+              >
+                <span className="hidden sm:inline">Começar Projeto</span>
+                <span className="sm:hidden">Começar</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
