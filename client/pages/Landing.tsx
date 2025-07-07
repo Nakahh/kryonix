@@ -371,7 +371,7 @@ const Landing = () => {
       category: "Geração",
       discount: "67% OFF",
       urgent: true,
-      value: "🎯 500+ leads qualificados/mês",
+      value: "�� 500+ leads qualificados/mês",
       testimonial: "1000 leads qualificados no primeiro mês - Diego Santos",
     },
     {
@@ -396,7 +396,6 @@ const Landing = () => {
       urgent: true,
       value: "📞 Atende 200 ligações simultâneas",
       testimonial: "Nossos clientes não conseguem distinguir - Lucas Ferreira",
-      limited: "Beta exclusivo - 10 slots restantes",
     },
   ];
 
