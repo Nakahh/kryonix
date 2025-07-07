@@ -312,79 +312,87 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Trial Alert */}
-        {user.trialDaysLeft > 0 && (
-          <Card className="mb-8 border-orange-200 bg-orange-50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <AlertCircle className="h-6 w-6 text-orange-600" />
-                  <div>
-                    <h3 className="font-semibold text-orange-900">
-                      Período de Avaliação
-                    </h3>
-                    <p className="text-orange-700">
-                      Você tem {user.trialDaysLeft} dias restantes para testar
-                      todas as funcionalidades gratuitamente.
-                    </p>
-                  </div>
-                </div>
-                <Button>Escolher Plano</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Visão Geral</h2>
+            <div className="flex space-x-2">
+              <Button size="sm" variant="outline">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Atualizar
+              </Button>
+              <Button size="sm">
+                <Play className="h-4 w-4 mr-2" />
+                Iniciar Automação
+              </Button>
+            </div>
+          </div>
+        </div>
 
-        {/* Metrics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
+        {/* Metrics Overview - Estilo Power BI */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Mensagens este mês</p>
-                  <p className="text-2xl font-bold">
-                    {metrics.messagesThisMonth}
+                  <p className="text-green-100 text-sm">
+                    Mensagens Processadas
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {metrics.messagesThisMonth.toLocaleString()}
+                  </p>
+                  <p className="text-green-100 text-xs mt-1">Este mês</p>
+                </div>
+                <MessageSquare className="h-10 w-10 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm">Leads Capturados</p>
+                  <p className="text-3xl font-bold">{metrics.leadsGenerated}</p>
+                  <p className="text-blue-100 text-xs mt-1">
+                    ↗ +23% vs mês anterior
                   </p>
                 </div>
-                <MessageSquare className="h-8 w-8 text-green-600" />
+                <Users className="h-10 w-10 text-blue-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Leads gerados</p>
-                  <p className="text-2xl font-bold">{metrics.leadsGenerated}</p>
-                </div>
-                <BarChart3 className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Agendamentos</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-purple-100 text-sm">Agendamentos</p>
+                  <p className="text-3xl font-bold">
                     {metrics.appointmentsScheduled}
                   </p>
+                  <p className="text-purple-100 text-xs mt-1">
+                    Taxa: {metrics.conversionRate}%
+                  </p>
                 </div>
-                <Calendar className="h-8 w-8 text-purple-600" />
+                <Calendar className="h-10 w-10 text-purple-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Receita</p>
-                  <p className="text-2xl font-bold">R$ {metrics.revenue}</p>
+                  <p className="text-yellow-100 text-sm">Receita Gerada</p>
+                  <p className="text-3xl font-bold">
+                    R$ {metrics.revenue.toLocaleString()}
+                  </p>
+                  <p className="text-yellow-100 text-xs mt-1">
+                    Resp. média: {metrics.averageResponseTime}
+                  </p>
                 </div>
-                <DollarSign className="h-8 w-8 text-yellow-600" />
+                <TrendingUp className="h-10 w-10 text-yellow-200" />
               </div>
             </CardContent>
           </Card>
