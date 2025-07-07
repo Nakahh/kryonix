@@ -186,7 +186,7 @@ const Landing = () => {
         "🔥 AUTOMAÇÃO COMPLETA DE LEADS - Distribui e converte automaticamente",
       features: [
         "Resposta automática instantânea 24/7",
-        "Distribuição inteligente para corretores",
+        "Distribuição inteligente para equipe",
         "Fallback humanizado após 15 minutos",
         "Histórico completo + Analytics",
         "Notificações em tempo real",
