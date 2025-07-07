@@ -162,8 +162,15 @@ const Landing = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="mb-8">
-            <div className="w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="mb-8 relative">
+            <div className="w-24 h-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
+                alt="KRYONIX Logo"
+                className="h-12 w-auto animate-pulse"
+              />
+            </div>
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">KRYONIX</h1>
           <p className="text-blue-200 text-lg">
