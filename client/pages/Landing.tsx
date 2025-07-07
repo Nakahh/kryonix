@@ -107,7 +107,7 @@ const Landing = () => {
       name: "TESTE GRÁTIS",
       price: 0,
       originalPrice: 0,
-      period: "/7 dias",
+      period: "/14 dias",
       features: [
         "WhatsApp Business básico",
         "IA personalizada limitada",
@@ -117,38 +117,43 @@ const Landing = () => {
       ],
       popular: false,
       isFree: true,
+      badge: "RISCO ZERO",
     },
     {
       name: "STARTER",
-      price: 66,
-      originalPrice: 97,
+      price: 99,
+      originalPrice: 297,
       period: "/mês",
       features: [
         "WhatsApp Business completo",
         "IA personalizada avançada",
         "Mensagens ilimitadas",
         "Dashboard profissional",
-        "Relatórios básicos",
-        "Suporte por e-mail",
+        "Relatórios avançados",
+        "Suporte por chat 24/7",
       ],
       popular: false,
-      discount: "32% OFF",
+      discount: "67% OFF",
+      badge: "MAIS VENDIDO",
+      savings: "R$ 2.376/ano",
     },
     {
       name: "PROFESSIONAL",
-      price: 136,
-      originalPrice: 197,
+      price: 204,
+      originalPrice: 497,
       period: "/mês",
       features: [
         "Tudo do Starter",
-        "API personalizada",
-        "Webhooks",
-        "Integrações avançadas",
-        "Backup automático",
-        "Suporte técnico especializado",
+        "API personalizada ilimitada",
+        "Webhooks avançados",
+        "Integrações premium",
+        "Backup automático em nuvem",
+        "Consultor dedicado 24/7",
       ],
       popular: true,
-      discount: "31% OFF",
+      discount: "59% OFF",
+      badge: "RECOMENDADO",
+      savings: "R$ 3.516/ano",
     },
   ];
 
@@ -186,7 +191,7 @@ const Landing = () => {
         "Estatísticas em tempo real",
         "Gestão de campanhas",
         "Auto-posting de conteúdo",
-        "Analytics avançadas",
+        "Analytics avan��adas",
         "Stories automáticos",
       ],
       icon: <BarChart3 className="h-6 w-6 text-blue-600" />,
@@ -988,7 +993,7 @@ const Landing = () => {
                           }`}
                         >
                           {selectedModules.includes(module.id)
-                            ? "��� Adicionado"
+                            ? "✓ Adicionado"
                             : "Clique para Adicionar"}
                         </div>
                       </CardContent>
@@ -1244,7 +1249,7 @@ const Landing = () => {
               },
               {
                 q: "Como é feita a integração com WhatsApp?",
-                a: "Simples! Você escaneia um QR Code e sua conta é conectada. A partir daí, a IA responde automaticamente.",
+                a: "Simples! Voc�� escaneia um QR Code e sua conta é conectada. A partir daí, a IA responde automaticamente.",
               },
             ].map((faq, index) => (
               <Card key={index}>
