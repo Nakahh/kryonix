@@ -1073,8 +1073,177 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* AI Consultant */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              🤖 Consultora IA Especializada
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Não sabe quais módulos precisa? Nossa IA analisa seu negócio e
+              recomenda a solução perfeita em segundos!
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Card className="shadow-2xl border-0 overflow-hidden">
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+                <h3 className="text-2xl font-bold mb-2">
+                  💬 Consultoria Gratuita com IA
+                </h3>
+                <p className="text-purple-100">
+                  Conte sobre seu negócio e receba recomendações personalizadas
+                </p>
+              </div>
+
+              <CardContent className="p-6">
+                {/* Chat Messages */}
+                <div className="h-80 overflow-y-auto mb-6 space-y-4 bg-gray-50 p-4 rounded-lg">
+                  {aiMessages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                          message.type === "user"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-800 border shadow-sm"
+                        }`}
+                      >
+                        {message.type === "ai" && (
+                          <div className="flex items-center mb-2">
+                            <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center mr-2">
+                              <span className="text-white text-xs">🤖</span>
+                            </div>
+                            <span className="text-xs font-semibold text-purple-600">
+                              Consultora IA
+                            </span>
+                          </div>
+                        )}
+                        <p className="text-sm">{message.text}</p>
+                      </div>
+                    </div>
+                  ))}
+
+                  {isAiTyping && (
+                    <div className="flex justify-start">
+                      <div className="bg-white text-gray-800 border shadow-sm max-w-xs px-4 py-3 rounded-lg">
+                        <div className="flex items-center mb-2">
+                          <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center mr-2">
+                            <span className="text-white text-xs">🤖</span>
+                          </div>
+                          <span className="text-xs font-semibold text-purple-600">
+                            Consultora IA
+                          </span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Input Form */}
+                <form onSubmit={handleAiSubmit} className="flex space-x-2">
+                  <Input
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder="Ex: Tenho uma clínica odontológica com 3 dentistas..."
+                    className="flex-1"
+                    disabled={isAiTyping}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isAiTyping || !userInput.trim()}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                  </Button>
+                </form>
+
+                {/* Quick Suggestions */}
+                <div className="mt-4">
+                  <p className="text-sm text-gray-600 mb-2">
+                    💡 Exemplos rápidos:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Tenho um restaurante de 20 mesas",
+                      "Clínica com 50 pacientes/dia",
+                      "Loja online de roupas",
+                      "Salão de beleza com 4 profissionais",
+                    ].map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setUserInput(suggestion);
+                          processAiMessage(suggestion);
+                        }}
+                        className="text-xs"
+                        disabled={isAiTyping}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Recommendations */}
+                {aiRecommendations.length > 0 && (
+                  <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <h4 className="font-bold text-green-900 mb-2">
+                      ✅ Módulos Recomendados pela IA:
+                    </h4>
+                    <div className="space-y-2">
+                      {aiRecommendations.map((moduleId) => {
+                        const module = modules.find((m) => m.id === moduleId);
+                        return module ? (
+                          <div
+                            key={moduleId}
+                            className="flex items-center justify-between bg-white p-3 rounded border"
+                          >
+                            <div className="flex items-center space-x-2">
+                              {module.icon}
+                              <span className="font-medium">{module.name}</span>
+                            </div>
+                            <span className="text-green-600 font-bold">
+                              R$ {module.price}/mês
+                            </span>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                    <div className="mt-3 text-center">
+                      <Button
+                        onClick={() => {
+                          document
+                            .getElementById("pricing-section")
+                            ?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                        }}
+                        className="bg-gradient-to-r from-green-600 to-blue-600"
+                      >
+                        Ver Plano Personalizado Abaixo
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
-      <section className="py-20 bg-gray-50">
+      <section id="pricing-section" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
