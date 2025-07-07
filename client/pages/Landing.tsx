@@ -371,7 +371,7 @@ const Landing = () => {
       category: "Geração",
       discount: "67% OFF",
       urgent: true,
-      value: "🎯 500+ leads qualificados/mês",
+      value: "��� 500+ leads qualificados/mês",
       testimonial: "1000 leads qualificados no primeiro mês - Diego Santos",
     },
     {
@@ -1252,7 +1252,7 @@ const Landing = () => {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
               <strong className="text-red-600">OFERTA RELÂMPAGO:</strong>{" "}
               Construa seu plano personalizado com até{" "}
-              <strong className="text-green-600">70% OFF</strong> + teste de 14
+              <strong className="text-green-600">70% OFF</strong> + teste de 7
               dias grátis.
               <br />
               Mais de <strong>2.847 empresas</strong> já transformaram seus
