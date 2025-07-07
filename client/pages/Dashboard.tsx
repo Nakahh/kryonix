@@ -133,7 +133,11 @@ const Dashboard = () => {
       icon: <Bot className="h-6 w-6" />,
       connected: user.aiConfigured,
       color: "bg-purple-500",
-      features: ["Prompts customizáveis", "Treinamento", "Respostas contextuais"],
+      features: [
+        "Prompts customizáveis",
+        "Treinamento",
+        "Respostas contextuais",
+      ],
       status: "Configuração necessária",
       setupTime: "5 minutos",
     },
@@ -288,7 +292,9 @@ const Dashboard = () => {
                 {Object.entries(systemStatus).map(([key, status]) => (
                   <div key={key} className="flex items-center space-x-1">
                     {getStatusIcon(status)}
-                    <span className="text-xs text-gray-600 capitalize">{key}</span>
+                    <span className="text-xs text-gray-600 capitalize">
+                      {key}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -329,8 +335,12 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm">Mensagens Processadas</p>
-                  <p className="text-3xl font-bold">{metrics.messagesThisMonth.toLocaleString()}</p>
+                  <p className="text-green-100 text-sm">
+                    Mensagens Processadas
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {metrics.messagesThisMonth.toLocaleString()}
+                  </p>
                   <p className="text-green-100 text-xs mt-1">Este mês</p>
                 </div>
                 <MessageSquare className="h-10 w-10 text-green-200" />
@@ -344,7 +354,9 @@ const Dashboard = () => {
                 <div>
                   <p className="text-blue-100 text-sm">Leads Capturados</p>
                   <p className="text-3xl font-bold">{metrics.leadsGenerated}</p>
-                  <p className="text-blue-100 text-xs mt-1">↗ +23% vs mês anterior</p>
+                  <p className="text-blue-100 text-xs mt-1">
+                    ↗ +23% vs mês anterior
+                  </p>
                 </div>
                 <Users className="h-10 w-10 text-blue-200" />
               </div>
@@ -356,8 +368,12 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100 text-sm">Agendamentos</p>
-                  <p className="text-3xl font-bold">{metrics.appointmentsScheduled}</p>
-                  <p className="text-purple-100 text-xs mt-1">Taxa: {metrics.conversionRate}%</p>
+                  <p className="text-3xl font-bold">
+                    {metrics.appointmentsScheduled}
+                  </p>
+                  <p className="text-purple-100 text-xs mt-1">
+                    Taxa: {metrics.conversionRate}%
+                  </p>
                 </div>
                 <Calendar className="h-10 w-10 text-purple-200" />
               </div>
@@ -369,8 +385,12 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-yellow-100 text-sm">Receita Gerada</p>
-                  <p className="text-3xl font-bold">R$ {metrics.revenue.toLocaleString()}</p>
-                  <p className="text-yellow-100 text-xs mt-1">Resp. média: {metrics.averageResponseTime}</p>
+                  <p className="text-3xl font-bold">
+                    R$ {metrics.revenue.toLocaleString()}
+                  </p>
+                  <p className="text-yellow-100 text-xs mt-1">
+                    Resp. média: {metrics.averageResponseTime}
+                  </p>
                 </div>
                 <TrendingUp className="h-10 w-10 text-yellow-200" />
               </div>
@@ -381,7 +401,9 @@ const Dashboard = () => {
         {/* Integration Modules - Grid Layout Moderno */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Módulos de Automação</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Módulos de Automação
+            </h2>
             <Button variant="outline" onClick={() => navigate("/settings")}>
               <Settings className="h-4 w-4 mr-2" />
               Ver Todas Configurações
@@ -401,7 +423,9 @@ const Dashboard = () => {
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`${module.color} p-3 rounded-xl text-white group-hover:scale-110 transition-transform`}>
+                    <div
+                      className={`${module.color} p-3 rounded-xl text-white group-hover:scale-110 transition-transform`}
+                    >
                       {module.icon}
                     </div>
                     <div className="flex items-center space-x-2">
@@ -429,7 +453,11 @@ const Dashboard = () => {
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-1">
                       {module.features.slice(0, 2).map((feature, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {feature}
                         </Badge>
                       ))}
@@ -450,71 +478,105 @@ const Dashboard = () => {
           </div>
         </div>
 
-          {/* Activity Feed */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Atividades Recentes
-            </h2>
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {activities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50"
-                    >
-                      <div className="flex-shrink-0">
+        {/* Activity Feed - Timeline Moderna */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Atividades em Tempo Real
+          </h2>
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <div className="space-y-0">
+                {activities.map((activity, index) => (
+                  <div
+                    key={activity.id}
+                    className={`flex items-center space-x-4 p-4 ${
+                      index !== activities.length - 1
+                        ? "border-b border-gray-100"
+                        : ""
+                    } hover:bg-gray-50 transition-colors`}
+                  >
+                    <div className="flex-shrink-0">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          activity.type === "whatsapp"
+                            ? "bg-green-100"
+                            : activity.type === "ai"
+                              ? "bg-purple-100"
+                              : activity.type === "calendar"
+                                ? "bg-blue-100"
+                                : activity.type === "payment"
+                                  ? "bg-yellow-100"
+                                  : "bg-gray-100"
+                        }`}
+                      >
                         {activity.type === "whatsapp" && (
                           <MessageSquare className="h-5 w-5 text-green-600" />
                         )}
+                        {activity.type === "ai" && (
+                          <Bot className="h-5 w-5 text-purple-600" />
+                        )}
                         {activity.type === "calendar" && (
-                          <Calendar className="h-5 w-5 text-purple-600" />
+                          <Calendar className="h-5 w-5 text-blue-600" />
                         )}
                         {activity.type === "payment" && (
                           <DollarSign className="h-5 w-5 text-yellow-600" />
                         )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-900">
-                          {activity.description}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {activity.time}
-                        </p>
+                        {activity.type === "email" && (
+                          <Mail className="h-5 w-5 text-red-600" />
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  Ver Todas as Atividades
-                </Button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900 truncate">
+                        {activity.description}
+                      </p>
+                      <p className="text-xs text-gray-500">{activity.time}</p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions - Cards Modernas */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Ações Rápidas
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <CardContent className="p-6 text-center">
+                <QrCode className="h-8 w-8 mx-auto text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
+                <p className="font-semibold text-sm">Gerar QR Code</p>
+                <p className="text-xs text-gray-500 mt-1">WhatsApp</p>
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="text-lg">Ações Rápidas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Gerar QR Code
-                  </Button>
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <FileText className="h-4 w-4 mr-2" />
-                    Relatório PDF
-                  </Button>
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Arquivos
-                  </Button>
-                  <Button variant="outline" size="sm" className="justify-start">
-                    <Mail className="h-4 w-4 mr-2" />
-                    Nova Campanha
-                  </Button>
-                </div>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <CardContent className="p-6 text-center">
+                <FileText className="h-8 w-8 mx-auto text-green-600 mb-3 group-hover:scale-110 transition-transform" />
+                <p className="font-semibold text-sm">Relatório PDF</p>
+                <p className="text-xs text-gray-500 mt-1">Mensal</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <CardContent className="p-6 text-center">
+                <Code className="h-8 w-8 mx-auto text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+                <p className="font-semibold text-sm">Código Embed</p>
+                <p className="text-xs text-gray-500 mt-1">Seu Site</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <CardContent className="p-6 text-center">
+                <ExternalLink className="h-8 w-8 mx-auto text-orange-600 mb-3 group-hover:scale-110 transition-transform" />
+                <p className="font-semibold text-sm">Abrir N8N</p>
+                <p className="text-xs text-gray-500 mt-1">Workflows</p>
               </CardContent>
             </Card>
           </div>
