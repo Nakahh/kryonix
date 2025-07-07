@@ -1,0 +1,416 @@
+{
+  "name": "KRYONIX - WhatsApp Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "whatsapp-webhook",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "whatsapp-kryonix"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar mensagem do WhatsApp\nconst data = $input.first().json;\n\n// Extrair informações da mensagem\nconst message = data.body?.message || data.message || '';\nconst from = data.body?.from || data.from || '';\nconst messageType = data.body?.type || data.type || 'text';\nconst timestamp = data.body?.timestamp || Date.now();\n\n// Detectar intenção da mensagem\nconst detectIntent = (msg) => {\n  const lowerMsg = msg.toLowerCase();\n  \n  // Saudações\n  if (/^(oi|olá|hello|hi|bom dia|boa tarde|boa noite)/.test(lowerMsg)) {\n    return 'greeting';\n  }\n  \n  // Interesse em serviços\n  if (/(preço|valor|quanto custa|orçamento|plano)/.test(lowerMsg)) {\n    return 'pricing';\n  }\n  \n  // Agendamento\n  if (/(agendar|marcar|horário|disponibilidade|consulta)/.test(lowerMsg)) {\n    return 'scheduling';\n  }\n  \n  // Suporte\n  if (/(ajuda|problema|erro|não funciona|suporte)/.test(lowerMsg)) {\n    return 'support';\n  }\n  \n  // Informações\n  if (/(como funciona|o que é|explicar|informação)/.test(lowerMsg)) {\n    return 'info';\n  }\n  \n  return 'general';\n};\n\nconst intent = detectIntent(message);\n\n// Verificar se é cliente existente\nconst phoneNumber = from.replace(/\\D/g, '');\n\nreturn {\n  message,\n  from,\n  phoneNumber,\n  messageType,\n  timestamp,\n  intent,\n  isGroup: from.includes('@g.us'),\n  processedAt: new Date().toISOString()\n};"
+      },
+      "id": "process-message",
+      "name": "Process Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM users WHERE phone = $1 LIMIT 1",
+        "additionalFields": {}
+      },
+      "id": "check-existing-user",
+      "name": "Check Existing User",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [600, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      },
+      "parameters": {
+        "values": ["{{ $json.phoneNumber }}"]
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "existing-user-condition",
+              "leftValue": "{{ $json.length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "user-exists-condition",
+      "name": "User Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-3.5-turbo",
+        "messages": {
+          "messageType": "multipleMessages",
+          "multipleMessages": [
+            {
+              "role": "system",
+              "message": "Você é um assistente da KRYONIX, empresa de automação empresarial. Responda de forma amigável e profissional. \n\nServiços principais:\n- Automação WhatsApp\n- Integração Instagram/Facebook \n- Agendamentos automáticos\n- CRM inteligente\n- IA para análise de dados\n- Chatbot 24/7\n\nIntenção detectada: {{ $('Process Message').first().json.intent }}\n\nResponda de acordo com a intenção:\n- greeting: Saudação + apresentação da empresa\n- pricing: Informar sobre planos (Starter R$99, Professional R$204, Enterprise personalizado)\n- scheduling: Oferecer agendamento de demonstração\n- support: Direcionar para suporte técnico\n- info: Explicar serviços da KRYONIX\n- general: Resposta geral + oferta de ajuda"
+            },
+            {
+              "role": "user",
+              "message": "{{ $('Process Message').first().json.message }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 300
+        }
+      },
+      "id": "generate-ai-response",
+      "name": "Generate AI Response",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1000, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-kryonix",
+          "name": "OpenAI KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Resposta personalizada para usuário existente\nconst userData = $('Check Existing User').first().json[0];\nconst messageData = $('Process Message').first().json;\n\nlet response = '';\n\nswitch (messageData.intent) {\n  case 'greeting':\n    response = `Olá ${userData.name}! 😊\\n\\nÉ sempre um prazer falar com você!\\n\\nComo posso ajudar hoje? Precisa de suporte com algum dos seus módulos ativos?`;\n    break;\n    \n  case 'support':\n    response = `Olá ${userData.name}! 🛠️\\n\\nVou te ajudar com o suporte técnico.\\n\\nPor favor, me conte qual problema você está enfrentando e vou direcionar para nossa equipe especializada.`;\n    break;\n    \n  case 'pricing':\n    response = `Oi ${userData.name}! 💰\\n\\nVocê já é nosso cliente no plano ${userData.plan}. \\n\\nQuer conhecer módulos adicionais ou fazer upgrade? Posso apresentar nossas novidades!`;\n    break;\n    \n  default:\n    response = `Olá ${userData.name}! 👋\\n\\nSou seu assistente da KRYONIX. Como posso ajudar você hoje?\\n\\n• Suporte técnico\\n• Novos módulos\\n• Relatórios\\n• Configurações`;\n}\n\nreturn {\n  response,\n  isExistingUser: true,\n  userData,\n  messageData\n};"
+      },
+      "id": "existing-user-response",
+      "name": "Existing User Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "whatsapp_messages",
+        "columns": "phone_number, message, intent, response, user_id, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-message-log",
+      "name": "Save Message Log",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1200, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.evolution-api.com/message/sendText",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "{{ $credentials.evolutionApi.apiKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "{{ $('Process Message').first().json.from }}"
+            },
+            {
+              "name": "text",
+              "value": "{{ $json.response || $('Generate AI Response').first().json.response }}"
+            },
+            {
+              "name": "delay",
+              "value": "1200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-whatsapp-response",
+      "name": "Send WhatsApp Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1400, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "evolution-api-kryonix",
+          "name": "Evolution API KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $('Process Message').first().json.intent }}",
+              "rightValue": "pricing",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-pricing-intent",
+      "name": "Pricing Intent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1600, 300]
+    },
+    {
+      "parameters": {
+        "url": "{{ $env.KRYONIX_API_URL }}/api/leads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.KRYONIX_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "{{ $('Process Message').first().json.phoneNumber }}"
+            },
+            {
+              "name": "message",
+              "value": "{{ $('Process Message').first().json.message }}"
+            },
+            {
+              "name": "intent",
+              "value": "pricing"
+            },
+            {
+              "name": "source",
+              "value": "whatsapp"
+            },
+            {
+              "name": "status",
+              "value": "interested"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "create-lead",
+      "name": "Create Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1800, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Mensagem processada com sucesso",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2000, 300]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message": {
+      "main": [
+        [
+          {
+            "node": "Check Existing User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing User": {
+      "main": [
+        [
+          {
+            "node": "User Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Exists?": {
+      "main": [
+        [
+          {
+            "node": "Existing User Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Response": {
+      "main": [
+        [
+          {
+            "node": "Save Message Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existing User Response": {
+      "main": [
+        [
+          {
+            "node": "Save Message Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Message Log": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Response": {
+      "main": [
+        [
+          {
+            "node": "Check Pricing Intent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Pricing Intent?": {
+      "main": [
+        [
+          {
+            "node": "Create Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Lead": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-20T10:00:00.000Z",
+  "updatedAt": "2024-01-20T10:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["kryonix", "whatsapp", "automation"],
+  "triggerCount": 0,
+  "versionId": "1"
+}
