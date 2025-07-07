@@ -15,6 +15,7 @@ import Quotation from "./pages/Quotation";
 import Admin from "./pages/Admin";
 import Settings from "./pages/Settings";
 import EmbedGenerator from "./pages/EmbedGenerator";
+import Financial from "./pages/Financial";
 import ChatBubble from "./components/ChatBubble";
 
 const queryClient = new QueryClient();
