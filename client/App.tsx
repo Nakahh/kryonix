@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Quotation from "./pages/Quotation";
 import Admin from "./pages/Admin";
+import Settings from "./pages/Settings";
 import ChatBubble from "./components/ChatBubble";
 
 const queryClient = new QueryClient();
