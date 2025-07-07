@@ -262,7 +262,7 @@ const Landing = () => {
       category: "Automação",
       discount: "68% OFF",
       urgent: true,
-      value: "��� Automatiza 95% dos processos manuais",
+      value: "���� Automatiza 95% dos processos manuais",
       testimonial: "Economizamos 40h/semana - Ana Costa, Diretora",
     },
     {
@@ -350,7 +350,6 @@ const Landing = () => {
       urgent: true,
       value: "🚀 Atende 5000+ clientes simultâneos",
       testimonial: "89% dos clientes preferem nosso bot - Marina Costa",
-      limited: "Tecnologia exclusiva - 18 vagas",
     },
     {
       id: 9,
