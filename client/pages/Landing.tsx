@@ -241,75 +241,6 @@ const Landing = () => {
     },
   ];
 
-  const premiumServices = [
-    {
-      name: "WhatsApp Business Integration",
-      price: "R$ 197",
-      period: "/mês",
-      status: "INACTIVE",
-      description:
-        "Integração completa com Evolution API para automação de leads",
-      features: [
-        "Resposta automática de leads",
-        "Distribuição inteligente para corretores",
-        "Fallback após 15 minutos",
-        "Histórico completo de conversas",
-        "Notificações em tempo real",
-        "N8N Integration Premium",
-      ],
-      icon: <MessageSquare className="h-8 w-8 text-green-600" />,
-    },
-    {
-      name: "Meta Business Integration",
-      price: "R$ 197",
-      period: "/mês",
-      status: "INACTIVE",
-      description:
-        "Integração com Facebook e Instagram para publicação automática",
-      features: [
-        "Publicação automática Instagram/Facebook",
-        "Estatísticas em tempo real",
-        "Gestão de campanhas",
-        "Auto-posting de imóveis",
-        "Analytics avançadas",
-        "N8N Integration Premium",
-      ],
-      icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
-    },
-    {
-      name: "Google Calendar Integration",
-      price: "R$ 97",
-      period: "/mês",
-      status: "INACTIVE",
-      description: "Agendamento automático de visitas com sincronização",
-      features: [
-        "Sincronização com Google Calendar",
-        "Agendamento automático de visitas",
-        "Lembretes por email e WhatsApp",
-        "Gestão de disponibilidade",
-        "Relatórios de agendamentos",
-        "N8N Integration",
-      ],
-      icon: <Calendar className="h-8 w-8 text-purple-600" />,
-    },
-    {
-      name: "N8N Automation Integration",
-      price: "R$ 147",
-      period: "/mês",
-      status: "INACTIVE",
-      description: "Automação completa de processos e integrações com APIs",
-      features: [
-        "Workflows automáticos",
-        "Integração com múltiplas APIs",
-        "Processamento de dados",
-        "Notificações automáticas",
-        "Backup de workflows",
-        "Suporte técnico especializado",
-      ],
-      icon: <Zap className="h-8 w-8 text-orange-600" />,
-    },
-  ];
-
   const businessTypes = [
     "Clínicas e Consultórios",
     "Salões de Beleza",
@@ -440,7 +371,7 @@ const Landing = () => {
             </span>
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
-            Especialistas em React, Node.js, IA e automação. Criamos soluções
+            Especialistas em React, Node.js, IA e automa��ão. Criamos soluções
             digitais que transformam negócios e melhoram a vida das pessoas.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
