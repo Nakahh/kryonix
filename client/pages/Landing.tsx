@@ -678,9 +678,11 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
+                <img
+                  src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
+                  alt="KRYONIX Logo"
+                  className="h-10 w-auto"
+                />
                 <div>
                   <span className="text-2xl font-bold">KRYONIX</span>
                   <p className="text-xs text-gray-400">Tecnologia de Ponta</p>
