@@ -29,42 +29,75 @@ import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const features = [
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const services = [
     {
-      icon: <MessageSquare className="h-8 w-8 text-blue-600" />,
-      title: "WhatsApp Automático",
+      icon: <Code className="h-8 w-8 text-blue-600" />,
+      title: "Desenvolvimento Web",
       description:
-        "Conecte seu WhatsApp e tenha respostas automáticas com IA personalizada para seu negócio.",
+        "Sites e sistemas web modernos com React, Node.js e tecnologias de ponta.",
     },
     {
-      icon: <Calendar className="h-8 w-8 text-green-600" />,
-      title: "Agendamentos Inteligentes",
+      icon: <MessageSquare className="h-8 w-8 text-green-600" />,
+      title: "Automação com IA",
       description:
-        "Integração com Google Calendar para agendamentos automáticos e lembretes.",
+        "WhatsApp automático, chatbots inteligentes e automação de processos.",
     },
     {
-      icon: <Mail className="h-8 w-8 text-purple-600" />,
-      title: "E-mail Marketing",
-      description:
-        "Campanhas automáticas, respostas personalizadas e follow-up de leads.",
+      icon: <Cpu className="h-8 w-8 text-purple-600" />,
+      title: "Inteligência Artificial",
+      description: "Soluções personalizadas com IA para otimizar seu negócio.",
     },
     {
-      icon: <DollarSign className="h-8 w-8 text-yellow-600" />,
-      title: "Cobranças Automáticas",
-      description: "Gere PIX, boletos e links de pagamento automaticamente.",
+      icon: <Calendar className="h-8 w-8 text-yellow-600" />,
+      title: "Sistemas de Gestão",
+      description: "ERPs, CRMs e sistemas personalizados para sua empresa.",
     },
     {
-      icon: <BarChart3 className="h-8 w-8 text-red-600" />,
-      title: "Relatórios em PDF",
+      icon: <Rocket className="h-8 w-8 text-red-600" />,
+      title: "DevOps & Cloud",
       description:
-        "Acompanhe métricas e gere relatórios profissionais automaticamente.",
+        "Deploy automático, infraestrutura na nuvem e monitoramento.",
     },
     {
-      icon: <Zap className="h-8 w-8 text-orange-600" />,
-      title: "IA Personalizada",
+      icon: <BarChart3 className="h-8 w-8 text-orange-600" />,
+      title: "Relatórios e BI",
       description:
-        "Treine uma IA especialista no seu negócio para atender clientes 24/7.",
+        "Dashboards interativos e business intelligence para decisões.",
+    },
+  ];
+
+  const stats = [
+    { number: "50+", label: "Projetos Entregues" },
+    { number: "100%", label: "Clientes Satisfeitos" },
+    { number: "5+", label: "Anos de Experiência" },
+    { number: "24/7", label: "Suporte Disponível" },
+  ];
+
+  const testimonials = [
+    {
+      name: "João Silva",
+      company: "TechStart",
+      text: "A Kryonix transformou nossa ideia em uma plataforma incrível. Superou todas as expectativas!",
+      rating: 5,
+    },
+    {
+      name: "Maria Santos",
+      company: "Digital Corp",
+      text: "Profissionalismo e qualidade excepcionais. Recomendo para qualquer projeto de tecnologia.",
+      rating: 5,
+    },
+    {
+      name: "Carlos Pereira",
+      company: "InnovaTech",
+      text: "Entrega rápida e suporte contínuo. A automação que criaram economizou horas do nosso time.",
+      rating: 5,
     },
   ];
 
