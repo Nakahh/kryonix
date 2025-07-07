@@ -59,39 +59,39 @@ const ChatBubble = () => {
     if (
       predefinedResponses.greeting.some((word) => lowerMessage.includes(word))
     ) {
-      return "Olá! Bem-vindo à AutoBiz! 🚀 Somos a plataforma que automatiza seu negócio com IA. Como posso ajudar você hoje?";
+      return "Olá! Bem-vindo à KRYONIX! 🚀 Transformamos ideias em soluções digitais. Desenvolvimento de software de alta qualidade com React, Node.js, IA e automação. Como posso ajudar você hoje?";
     }
 
     if (
       predefinedResponses.pricing.some((word) => lowerMessage.includes(word))
     ) {
-      return "Nossos planos são: 💳\n\n• GRATUITO: 7 dias para testar\n• PROFISSIONAL: R$ 49/mês\n• PREMIUM: R$ 99/mês\n\nQuer saber mais sobre algum plano específico?";
+      return "Nossos serviços incluem: 💻\n\n• Desenvolvimento Web (React, Node.js)\n• Aplicativos Mobile\n• Inteligência Artificial\n• Automação de Processos\n• DevOps & Cloud\n• Consultoria Técnica\n\nEntre em contato para um orçamento personalizado!";
     }
 
     if (
       predefinedResponses.features.some((word) => lowerMessage.includes(word))
     ) {
-      return "Nossa plataforma oferece: ⚡\n\n• WhatsApp automático com IA\n• E-mail marketing\n• Agendamentos inteligentes\n• Cobranças automáticas\n• Relatórios em PDF\n• Formulários personalizados\n\nTudo 100% automatizado!";
+      return "A KRYONIX oferece soluções completas: ⚡\n\n• Desenvolvimento Full Stack\n• Sistemas de automação\n• Integração com IA\n• WhatsApp Business API\n• Dashboards personalizados\n• Suporte 24/7\n\nTecnologias de ponta para seu negócio!";
     }
 
     if (
       predefinedResponses.whatsapp.some((word) => lowerMessage.includes(word))
     ) {
-      return "Para conectar seu WhatsApp é super simples! 📱\n\n1. Faça seu cadastro gratuito\n2. Entre no painel\n3. Escaneie o QR Code\n4. Pronto! Sua IA já estará respondendo clientes 24/7\n\nQuer começar agora?";
+      return "Nosso WhatsApp Business: 📱\n\n(17) 9 8180-5327\n\nOu me siga no Instagram: @kryon.ix\n\nVamos conversar sobre seu projeto! Respondemos rapidamente e fazemos orçamentos personalizados.";
     }
 
     if (predefinedResponses.trial.some((word) => lowerMessage.includes(word))) {
-      return "Sim! Oferecemos 7 dias TOTALMENTE GRÁTIS! 🎉\n\nVocê pode testar todas as funcionalidades sem pagar nada. Não precisamos nem do seu cartão de crédito.\n\nQuer começar seu teste agora?";
+      return "Oferecemos consultoria GRATUITA! 🎉\n\nPodemos analisar seu projeto e sugerir as melhores soluções tecnológicas. Entre em contato:\n\n• WhatsApp: (17) 9 8180-5327\n• Instagram: @kryon.ix\n\nVamos transformar sua ideia em realidade!";
     }
 
     if (
       predefinedResponses.quotation.some((word) => lowerMessage.includes(word))
     ) {
-      return "Criamos sites personalizados! 🌐\n\nNossa IA faz algumas perguntas e gera um orçamento na hora:\n• Sites institucionais\n• Lojas virtuais\n• Sistemas personalizados\n\nQuer fazer um orçamento grátis?";
+      return "Criamos soluções personalizadas! 🌐\n\n• Sites institucionais\n• Sistemas web completos\n• Aplicativos mobile\n• Integrações com IA\n• Automação de processos\n\nFale com nosso CEO Vitor Jayme para um orçamento personalizado!";
     }
 
     // Default response
-    return "Interessante! 🤔 Para uma resposta mais específica, recomendo falar com nossa equipe de vendas ou começar seu teste grátis de 7 dias. Posso ajudar com mais alguma coisa?";
+    return "Obrigado pelo interesse na KRYONIX! 🤔\n\nPara uma conversa mais detalhada sobre seu projeto:\n\n📱 WhatsApp: (17) 9 8180-5327\n📷 Instagram: @kryon.ix\n\nNosso CEO Vitor Jayme está sempre disponível para novos desafios tecnológicos!";
   };
 
   const sendMessage = async () => {
