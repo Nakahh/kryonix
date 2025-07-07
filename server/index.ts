@@ -28,6 +28,7 @@ import {
   handleGetSystemStatus,
 } from "./routes/config.js";
 import { handleDemoRoute } from "./routes/demo.js";
+import adminRouter from "./routes/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
