@@ -264,7 +264,6 @@ const Landing = () => {
       urgent: true,
       value: "💎 Automatiza 95% dos processos manuais",
       testimonial: "Economizamos 40h/semana - Ana Costa, Diretora",
-      limited: "Exclusivo para 15 empresas",
     },
     {
       id: 5,
@@ -1065,7 +1064,7 @@ const Landing = () => {
                       {module.limited && (
                         <div className="absolute top-3 left-3 z-10">
                           <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-                            🏃‍♂️ {module.limited}
+                            🏃���♂️ {module.limited}
                           </span>
                         </div>
                       )}
