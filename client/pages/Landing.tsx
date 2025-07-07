@@ -157,59 +157,138 @@ const Landing = () => {
     "Corretores de Imóveis",
   ];
 
+  // Loading Screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-4">KRYONIX</h1>
+          <p className="text-blue-200 text-lg">
+            Transformando ideias em soluções digitais
+          </p>
+          <div className="mt-8 flex justify-center space-x-1">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Zap className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">AutoBiz</span>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                KRYONIX
+              </span>
+              <p className="text-xs text-gray-600">Tecnologia de Ponta</p>
+            </div>
           </div>
+          <nav className="hidden md:flex space-x-8">
+            <a
+              href="#sobre"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Sobre
+            </a>
+            <a
+              href="#servicos"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Serviços
+            </a>
+            <a
+              href="#projetos"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Projetos
+            </a>
+            <a
+              href="#depoimentos"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Depoimentos
+            </a>
+          </nav>
           <div className="space-x-4">
             <Button variant="ghost" onClick={() => navigate("/login")}>
               Entrar
             </Button>
-            <Button onClick={() => navigate("/register")}>
-              Começar Grátis
+            <Button
+              onClick={() => navigate("/register")}
+              className="bg-gradient-to-r from-blue-600 to-purple-600"
+            >
+              Começar Projeto
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Automatize Seu Negócio com
-            <span className="text-blue-600"> Inteligência Artificial</span>
+      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="container mx-auto px-4 text-center relative">
+          <div className="mb-8">
+            <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <Rocket className="w-4 h-4 mr-2" />
+              Desenvolvimento de software de alta qualidade
+            </div>
+          </div>
+          <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Transformando ideias em
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+              soluções digitais
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            A primeira plataforma que cria e automatiza todo o atendimento e
-            operação do seu negócio. WhatsApp, e-mail, agendamentos, cobranças e
-            muito mais - tudo em um só lugar.
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Especialistas em React, Node.js, IA e automação. Criamos soluções
+            digitais que transformam negócios e melhoram a vida das pessoas.
           </p>
-          <div className="space-x-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8 py-3"
-              onClick={() => navigate("/register")}
+              className="text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              onClick={() => navigate("/quotation")}
             >
-              <Shield className="mr-2 h-5 w-5" />
-              Teste Grátis por 7 Dias
+              <MessageSquare className="mr-2 h-5 w-5" />
+              Conversar no WhatsApp
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-3"
-              onClick={() => navigate("/quotation")}
+              className="text-lg px-8 py-4 border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+              onClick={() =>
+                window.open("https://instagram.com/kryon.ix", "_blank")
+              }
             >
-              Quero um Site
+              @kryon.ix
             </Button>
           </div>
-          <p className="text-sm text-gray-500 mt-4">
-            Sem cartão de crédito • Sem compromisso • Resultados em minutos
-          </p>
+          <div className="mt-12 flex justify-center space-x-8 text-sm text-gray-600">
+            <div className="flex items-center">
+              <Award className="w-5 h-5 mr-2 text-blue-600" />
+              Full Stack Developer
+            </div>
+            <div className="flex items-center">
+              <Cpu className="w-5 h-5 mr-2 text-purple-600" />
+              AI Specialist
+            </div>
+            <div className="flex items-center">
+              <Zap className="w-5 h-5 mr-2 text-orange-600" />
+              Automation Expert
+            </div>
+          </div>
         </div>
       </section>
 
