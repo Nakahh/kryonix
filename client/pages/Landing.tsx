@@ -103,6 +103,21 @@ const Landing = () => {
 
   const plans = [
     {
+      name: "TESTE GRÁTIS",
+      price: "R$ 0",
+      period: "/7 dias",
+      features: [
+        "WhatsApp Business básico",
+        "IA personalizada limitada",
+        "Até 100 mensagens/mês",
+        "Suporte por e-mail",
+        "Teste todas as funcionalidades",
+        "Sem compromisso",
+      ],
+      popular: false,
+      isFree: true,
+    },
+    {
       name: "STARTER",
       price: "R$ 97",
       period: "/mês",
@@ -143,6 +158,75 @@ const Landing = () => {
         "Suporte prioritário 24/7",
       ],
       popular: false,
+    },
+  ];
+
+  const premiumServices = [
+    {
+      name: "WhatsApp Business Integration",
+      price: "R$ 197",
+      period: "/mês",
+      status: "INACTIVE",
+      description:
+        "Integração completa com Evolution API para automação de leads",
+      features: [
+        "Resposta automática de leads",
+        "Distribuição inteligente para corretores",
+        "Fallback após 15 minutos",
+        "Histórico completo de conversas",
+        "Notificações em tempo real",
+        "N8N Integration Premium",
+      ],
+      icon: <MessageSquare className="h-8 w-8 text-green-600" />,
+    },
+    {
+      name: "Meta Business Integration",
+      price: "R$ 197",
+      period: "/mês",
+      status: "INACTIVE",
+      description:
+        "Integração com Facebook e Instagram para publicação automática",
+      features: [
+        "Publicação automática Instagram/Facebook",
+        "Estatísticas em tempo real",
+        "Gestão de campanhas",
+        "Auto-posting de imóveis",
+        "Analytics avançadas",
+        "N8N Integration Premium",
+      ],
+      icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
+    },
+    {
+      name: "Google Calendar Integration",
+      price: "R$ 97",
+      period: "/mês",
+      status: "INACTIVE",
+      description: "Agendamento automático de visitas com sincronização",
+      features: [
+        "Sincronização com Google Calendar",
+        "Agendamento automático de visitas",
+        "Lembretes por email e WhatsApp",
+        "Gestão de disponibilidade",
+        "Relatórios de agendamentos",
+        "N8N Integration",
+      ],
+      icon: <Calendar className="h-8 w-8 text-purple-600" />,
+    },
+    {
+      name: "N8N Automation Integration",
+      price: "R$ 147",
+      period: "/mês",
+      status: "INACTIVE",
+      description: "Automação completa de processos e integrações com APIs",
+      features: [
+        "Workflows automáticos",
+        "Integração com múltiplas APIs",
+        "Processamento de dados",
+        "Notificações automáticas",
+        "Backup de workflows",
+        "Suporte técnico especializado",
+      ],
+      icon: <Zap className="h-8 w-8 text-orange-600" />,
     },
   ];
 
