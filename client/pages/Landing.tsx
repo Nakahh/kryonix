@@ -548,7 +548,7 @@ const Landing = () => {
     "Prestadores de Serviços",
     "Academias e Personal Trainers",
     "Advogados e Contadores",
-    "Corretores de Imóveis",
+    "Empresas de Tecnologia",
   ];
 
   // Loading Screen
@@ -1300,7 +1300,7 @@ const Landing = () => {
               </div>
               <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
                 <Users className="w-4 h-4 mr-2" />
-                ���� 2.847+ empresas ativas
+                👥 2.847+ empresas ativas
               </div>
             </div>
           </div>
@@ -1548,7 +1548,7 @@ const Landing = () => {
               <Card className="overflow-hidden shadow-2xl">
                 <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-8 text-center">
                   <h2 className="text-3xl font-bold mb-2">
-                    🎉 Parabéns! Seu Plano Está Pronto
+                    �� Parabéns! Seu Plano Está Pronto
                   </h2>
                   <p className="text-green-100">
                     Você montou uma solução completa de automação para seu
