@@ -593,6 +593,80 @@ const Landing = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white border-t">
+            <div className="px-4 py-2 space-y-2">
+              <a
+                href="#sobre"
+                className="block py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sobre
+              </a>
+              <a
+                href="#servicos"
+                className="block py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Serviços
+              </a>
+              <button
+                onClick={() => {
+                  navigate("/dashboard");
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center w-full py-2 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/settings");
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center w-full py-2 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Configurações
+              </button>
+              <a
+                href="#depoimentos"
+                className="block py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Depoimentos
+              </a>
+              <div className="pt-4 border-t space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigate("/login");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center"
+                >
+                  <Users className="h-4 w-4 mr-1" />
+                  Entrar
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/register");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center"
+                  size="sm"
+                >
+                  <Rocket className="h-4 w-4 mr-1" />
+                  Começar Teste
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
