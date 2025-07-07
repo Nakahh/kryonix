@@ -316,10 +316,14 @@ const Dashboard = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Visão Geral</h2>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="outline">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar
+              </Button>
+              <Button size="sm" onClick={() => navigate("/financial")}>
+                <DollarSign className="h-4 w-4 mr-2" />
+                Financeiro
               </Button>
               <Button size="sm">
                 <Play className="h-4 w-4 mr-2" />
