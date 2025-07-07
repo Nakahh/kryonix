@@ -53,7 +53,7 @@ const Login = () => {
     "Prestador de Serviços",
     "Academia ou Personal Trainer",
     "Advogado ou Contador",
-    "Corretor de Imóveis",
+    "Empresa de Tecnologia",
     "Outro",
   ];
 
