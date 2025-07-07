@@ -16,6 +16,17 @@ import {
   handleUpdateQuotationStatus,
   handleCalculatePrice,
 } from "./routes/quotations.js";
+import {
+  handleSaveConfig,
+  handleGetConfig,
+  handleTestOpenAI,
+  handleTestGoogle,
+  handleTestStripe,
+  handleTestResend,
+  handleTestN8N,
+  handleTestWhatsApp,
+  handleGetSystemStatus,
+} from "./routes/config.js";
 import { handleDemoRoute } from "./routes/demo.js";
 
 const __filename = fileURLToPath(import.meta.url);
