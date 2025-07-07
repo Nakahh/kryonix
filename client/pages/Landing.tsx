@@ -331,7 +331,7 @@ const Landing = () => {
     },
     {
       id: 8,
-      name: "Chatbot IA Avan��ado",
+      name: "Chatbot IA Avançado",
       price: 126,
       originalPrice: 397,
       period: "/mês",
@@ -403,6 +403,7 @@ const Landing = () => {
   const [selectedModules, setSelectedModules] = useState<number[]>([]);
   const [selectedBasePlan, setSelectedBasePlan] = useState(1); // Professional por padrão
   const [showCheckout, setShowCheckout] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 47,
