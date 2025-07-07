@@ -371,7 +371,7 @@ const Landing = () => {
       category: "Geração",
       discount: "67% OFF",
       urgent: true,
-      value: "��� 500+ leads qualificados/mês",
+      value: "🎯 500+ leads qualificados/mês",
       testimonial: "1000 leads qualificados no primeiro mês - Diego Santos",
     },
     {
@@ -1300,7 +1300,7 @@ const Landing = () => {
               </div>
               <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center">
                 <Users className="w-4 h-4 mr-2" />
-                👥 2.847+ empresas ativas
+                ���� 2.847+ empresas ativas
               </div>
             </div>
           </div>
@@ -1766,7 +1766,7 @@ const Landing = () => {
                       className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-xl py-8 animate-pulse shadow-2xl"
                       onClick={() => navigate("/register")}
                     >
-                      🚀 GARANTIR MINHA VAGA - 14 DIAS GRÁTIS
+                      🚀 GARANTIR MINHA VAGA - 7 DIAS GRÁTIS
                     </Button>
                     <p className="text-lg font-bold text-green-600">
                       Economia total: R$ {getTotalSavings()}/mês = R${" "}
