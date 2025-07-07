@@ -331,7 +331,7 @@ const Landing = () => {
     },
     {
       id: 8,
-      name: "Chatbot IA Avançado",
+      name: "Chatbot IA Avan��ado",
       price: 126,
       originalPrice: 397,
       period: "/mês",
@@ -524,12 +524,20 @@ const Landing = () => {
               >
                 Serviços
               </a>
-              <a
-                href="#projetos"
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center"
               >
-                Projetos
-              </a>
+                <BarChart3 className="h-4 w-4 mr-1" />
+                Dashboard
+              </button>
+              <button
+                onClick={() => navigate("/settings")}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center"
+              >
+                <Settings className="h-4 w-4 mr-1" />
+                Configurações
+              </button>
               <a
                 href="#depoimentos"
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
@@ -538,23 +546,48 @@ const Landing = () => {
               </a>
             </nav>
 
+            {/* Mobile Navigation */}
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </Button>
+            </div>
+
             {/* Action Buttons */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="hidden lg:flex items-center space-x-2 sm:space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate("/login")}
-                className="hidden sm:inline-flex"
+                className="flex items-center"
               >
+                <Users className="h-4 w-4 mr-1" />
                 Entrar
               </Button>
               <Button
                 onClick={() => navigate("/register")}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-sm sm:text-base px-3 sm:px-4"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 flex items-center"
                 size="sm"
               >
-                <span className="hidden sm:inline">Começar Projeto</span>
-                <span className="sm:hidden">Começar</span>
+                <Rocket className="h-4 w-4 mr-1" />
+                Começar Teste
               </Button>
             </div>
           </div>
