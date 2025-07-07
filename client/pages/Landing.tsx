@@ -198,7 +198,6 @@ const Landing = () => {
       urgent: true,
       value: "💰 Economiza R$ 15.000/mês em funcionários",
       testimonial: "Aumentou nossas vendas em 340% - João Silva, CEO",
-      limited: "Apenas 47 vagas restantes",
     },
     {
       id: 2,
