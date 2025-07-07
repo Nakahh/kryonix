@@ -1,0 +1,245 @@
+{
+  "name": "KRYONIX - Complete Automation Workflows",
+  "description": "Conjunto completo de workflows para automação 100% autônoma da plataforma KRYONIX",
+  "version": "1.0.0",
+  "author": "Vitor Jayme Fernandes Ferreira - KRYONIX",
+  "created": "2024-01-20T10:00:00.000Z",
+  "workflows": [
+    {
+      "name": "IA Consultant Workflow",
+      "file": "ia-consultant-workflow.json",
+      "description": "Consultoria inteligente com IA para recomendação de módulos personalizados",
+      "webhookPath": "/webhook/ia-consultant",
+      "triggers": ["HTTP Webhook"],
+      "features": [
+        "Análise de negócio com IA",
+        "Recomendação automática de módulos",
+        "Cálculo de preços personalizado",
+        "Salvamento de sessões no banco"
+      ]
+    },
+    {
+      "name": "WhatsApp Automation",
+      "file": "whatsapp-automation.json",
+      "description": "Automação completa do WhatsApp Business com IA",
+      "webhookPath": "/webhook/whatsapp-webhook",
+      "triggers": ["WhatsApp Webhook"],
+      "features": [
+        "Processamento de mensagens WhatsApp",
+        "Detecção de intenções com IA",
+        "Respostas automáticas personalizadas",
+        "Geração de leads qualificados"
+      ]
+    },
+    {
+      "name": "CRM Lead Management",
+      "file": "crm-lead-management.json",
+      "description": "Gestão inteligente de leads com scoring automático e distribuição para vendas",
+      "webhookPath": "/webhook/lead-webhook",
+      "triggers": ["HTTP Webhook"],
+      "features": [
+        "Score automático de leads",
+        "Distribuição inteligente para vendedores",
+        "Notificações em tempo real",
+        "Follow-ups automáticos"
+      ]
+    },
+    {
+      "name": "Calendar Scheduling",
+      "file": "calendar-scheduling.json",
+      "description": "Agendamento automático com Google Calendar e notificações",
+      "webhookPath": "/webhook/schedule-appointment",
+      "triggers": ["HTTP Webhook"],
+      "features": [
+        "Agendamento automático Google Calendar",
+        "Verificação de disponibilidade",
+        "Links Google Meet automáticos",
+        "Confirmações por email e WhatsApp"
+      ]
+    },
+    {
+      "name": "Email Marketing Automation",
+      "file": "email-marketing-automation.json",
+      "description": "Campanhas de email automatizadas com IA e tracking completo",
+      "webhookPath": "/webhook/email-webhook",
+      "triggers": ["Schedule Trigger", "HTTP Webhook"],
+      "features": [
+        "Campanhas automáticas por segmento",
+        "Personalização com IA",
+        "Tracking de abertura e cliques",
+        "Geração automática de hot leads"
+      ]
+    }
+  ],
+  "credentials_required": [
+    {
+      "name": "PostgreSQL KRYONIX",
+      "type": "postgres",
+      "description": "Banco de dados principal da KRYONIX",
+      "required_fields": ["host", "database", "username", "password"]
+    },
+    {
+      "name": "OpenAI KRYONIX",
+      "type": "openAiApi",
+      "description": "API da OpenAI para IA conversacional",
+      "required_fields": ["apiKey"]
+    },
+    {
+      "name": "Evolution API KRYONIX",
+      "type": "httpHeaderAuth",
+      "description": "API Evolution para WhatsApp Business",
+      "required_fields": ["apiKey"]
+    },
+    {
+      "name": "SMTP KRYONIX",
+      "type": "smtp",
+      "description": "Servidor SMTP para envio de emails",
+      "required_fields": ["host", "port", "user", "password"]
+    },
+    {
+      "name": "Google Calendar KRYONIX",
+      "type": "googleCalendarOAuth2Api",
+      "description": "API Google Calendar para agendamentos",
+      "required_fields": ["clientId", "clientSecret"]
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "KRYONIX_API_URL",
+      "description": "URL base da API KRYONIX",
+      "example": "https://api.kryonix.com"
+    },
+    {
+      "name": "KRYONIX_API_KEY",
+      "description": "Chave de API para autenticação KRYONIX",
+      "example": "kryonix_api_key_123"
+    },
+    {
+      "name": "N8N_WEBHOOK_URL",
+      "description": "URL base dos webhooks N8N",
+      "example": "https://n8n.kryonix.com"
+    }
+  ],
+  "database_setup": {
+    "file": "database-schema.sql",
+    "description": "Execute este arquivo SQL para criar todas as tabelas necessárias",
+    "required": true
+  },
+  "installation_steps": [
+    {
+      "step": 1,
+      "title": "Configurar Banco de Dados",
+      "description": "Execute o arquivo database-schema.sql no PostgreSQL",
+      "command": "psql -U postgres -d kryonix -f database-schema.sql"
+    },
+    {
+      "step": 2,
+      "title": "Configurar Credenciais N8N",
+      "description": "Adicione todas as credenciais listadas acima no N8N",
+      "details": "Acesse Settings > Credentials no N8N e configure cada uma"
+    },
+    {
+      "step": 3,
+      "title": "Importar Workflows",
+      "description": "Importe cada workflow JSON individualmente no N8N",
+      "details": "Workflows > Import from File > Selecione cada arquivo .json"
+    },
+    {
+      "step": 4,
+      "title": "Ativar Workflows",
+      "description": "Ative todos os workflows importados",
+      "details": "Clique no toggle para ativar cada workflow"
+    },
+    {
+      "step": 5,
+      "title": "Configurar Webhooks",
+      "description": "Configure os webhooks da aplicação para apontar para o N8N",
+      "urls": {
+        "IA Consultant": "https://SEU-N8N.com/webhook/ia-consultant",
+        "WhatsApp": "https://SEU-N8N.com/webhook/whatsapp-webhook",
+        "Leads": "https://SEU-N8N.com/webhook/lead-webhook",
+        "Agendamento": "https://SEU-N8N.com/webhook/schedule-appointment",
+        "Email Events": "https://SEU-N8N.com/webhook/email-webhook"
+      }
+    }
+  ],
+  "testing": {
+    "description": "Como testar os workflows após instalação",
+    "tests": [
+      {
+        "workflow": "IA Consultant",
+        "method": "POST",
+        "url": "/webhook/ia-consultant",
+        "payload": {
+          "message": "Tenho uma clínica odontológica com 3 dentistas"
+        },
+        "expected": "Recomendações de módulos específicos para clínicas"
+      },
+      {
+        "workflow": "WhatsApp",
+        "method": "POST",
+        "url": "/webhook/whatsapp-webhook",
+        "payload": {
+          "body": {
+            "message": "Olá, gostaria de saber sobre os preços",
+            "from": "5511999999999@c.us"
+          }
+        },
+        "expected": "Resposta automática com informações de preços"
+      },
+      {
+        "workflow": "Leads",
+        "method": "POST",
+        "url": "/webhook/lead-webhook",
+        "payload": {
+          "name": "João Silva",
+          "email": "joao@teste.com",
+          "phone": "11999999999",
+          "message": "Interessado em automação",
+          "source": "website"
+        },
+        "expected": "Lead salvo no banco e notificação para vendas"
+      }
+    ]
+  },
+  "monitoring": {
+    "description": "Como monitorar os workflows",
+    "metrics": [
+      "Taxa de sucesso dos workflows",
+      "Tempo de resposta médio",
+      "Número de execuções por dia",
+      "Erros e falhas"
+    ],
+    "dashboards": [
+      "N8N Execution History",
+      "PostgreSQL Logs",
+      "Webhook Response Times"
+    ]
+  },
+  "troubleshooting": {
+    "common_issues": [
+      {
+        "issue": "Webhook retorna 500",
+        "solution": "Verificar se as credenciais estão configuradas corretamente"
+      },
+      {
+        "issue": "IA não responde",
+        "solution": "Verificar se a chave OpenAI está válida e tem créditos"
+      },
+      {
+        "issue": "WhatsApp não envia",
+        "solution": "Verificar se a Evolution API está online e configurada"
+      },
+      {
+        "issue": "Email não enviado",
+        "solution": "Verificar configurações SMTP e limites de envio"
+      }
+    ]
+  },
+  "support": {
+    "developer": "Vitor Jayme Fernandes Ferreira",
+    "whatsapp": "+55 17 9 8180-5327",
+    "email": "contato@kryonix.com",
+    "instagram": "@kryon.ix"
+  }
+}
