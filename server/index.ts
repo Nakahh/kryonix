@@ -52,6 +52,9 @@ export function createServer() {
   app.get("/api/auth/user", handleGetUser);
   app.get("/api/auth/google/callback", handleGoogleCallback);
 
+  // Admin routes (protected)
+  app.use("/api/admin", adminRouter);
+
   // Quotation routes
   app.post("/api/quotations", handleCreateQuotation);
   app.get("/api/quotations", handleGetQuotations);
