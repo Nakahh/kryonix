@@ -393,6 +393,11 @@ const Landing = () => {
   const [selectedModules, setSelectedModules] = useState<number[]>([]);
   const [selectedBasePlan, setSelectedBasePlan] = useState(1); // Professional por padrão
   const [showCheckout, setShowCheckout] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 23,
+    minutes: 47,
+    seconds: 32,
+  });
 
   // Funções para controlar seleção de módulos
   const toggleModule = (moduleId: number) => {
