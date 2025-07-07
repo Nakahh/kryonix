@@ -286,7 +286,6 @@ const Landing = () => {
       urgent: true,
       value: "📊 Aumenta faturamento em 85%",
       testimonial: "ROI de 1200% no primeiro ano - Roberto Lima",
-      limited: "Tecnologia exclusiva - 12 slots",
     },
     {
       id: 6,
@@ -1064,7 +1063,7 @@ const Landing = () => {
                       {module.limited && (
                         <div className="absolute top-3 left-3 z-10">
                           <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-                            🏃���♂️ {module.limited}
+                            🏃‍♂️ {module.limited}
                           </span>
                         </div>
                       )}
