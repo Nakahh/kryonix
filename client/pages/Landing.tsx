@@ -220,7 +220,7 @@ const Landing = () => {
       price: 84,
       originalPrice: 150,
       period: "/mês",
-      description: "Automação completa de processos empresariais",
+      description: "Automaç��o completa de processos empresariais",
       features: [
         "Workflows automáticos ilimitados",
         "Integração com 500+ APIs",
@@ -322,6 +322,45 @@ const Landing = () => {
   const [selectedModules, setSelectedModules] = useState<number[]>([]);
   const [selectedBasePlan, setSelectedBasePlan] = useState(1); // Professional por padrão
   const [showCheckout, setShowCheckout] = useState(false);
+
+  // Funções para controlar seleção de módulos
+  const toggleModule = (moduleId: number) => {
+    setSelectedModules((prev) =>
+      prev.includes(moduleId)
+        ? prev.filter((id) => id !== moduleId)
+        : [...prev, moduleId],
+    );
+  };
+
+  const selectBasePlan = (planIndex: number) => {
+    setSelectedBasePlan(planIndex);
+  };
+
+  const calculateTotal = () => {
+    const basePlanPrice = basePlans[selectedBasePlan]?.price || 0;
+    const modulesPrice = selectedModules.reduce((total, moduleId) => {
+      const module = modules.find((m) => m.id === moduleId);
+      return total + (module?.price || 0);
+    }, 0);
+    return basePlanPrice + modulesPrice;
+  };
+
+  const calculateOriginalTotal = () => {
+    const basePlanPrice = basePlans[selectedBasePlan]?.originalPrice || 0;
+    const modulesPrice = selectedModules.reduce((total, moduleId) => {
+      const module = modules.find((m) => m.id === moduleId);
+      return total + (module?.originalPrice || 0);
+    }, 0);
+    return basePlanPrice + modulesPrice;
+  };
+
+  const getSelectedModulesData = () => {
+    return modules.filter((module) => selectedModules.includes(module.id));
+  };
+
+  const getTotalSavings = () => {
+    return calculateOriginalTotal() - calculateTotal();
+  };
 
   const businessTypes = [
     "Clínicas e Consultórios",
