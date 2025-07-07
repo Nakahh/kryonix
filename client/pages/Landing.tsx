@@ -47,7 +47,7 @@ const Landing = () => {
       icon: <MessageSquare className="h-8 w-8 text-green-600" />,
       title: "Automação com IA",
       description:
-        "WhatsApp autom��tico, chatbots inteligentes e automação de processos.",
+        "WhatsApp automático, chatbots inteligentes e automação de processos.",
     },
     {
       icon: <Cpu className="h-8 w-8 text-purple-600" />,
@@ -313,7 +313,7 @@ const Landing = () => {
                 Criamos soluções digitais que transformam negócios e melhoram a
                 vida das pessoas. Liderada por{" "}
                 <strong>Vitor Jayme Fernandes Ferreira</strong>, nossa equipe
-                combina expertise técnica com vis��o estratégica para entregar
+                combina expertise técnica com visão estratégica para entregar
                 projetos que superam expectativas.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
@@ -342,12 +342,26 @@ const Landing = () => {
               </div>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8">
-                <img
-                  src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
-                  alt="Kryonix Logo"
-                  className="w-full max-w-md mx-auto"
-                />
+              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                    <img
+                      src="https://cdn.builder.io/api/v1/image/assets%2F48d3800139714cc4a8c7b3af42e151ce%2F7069598011f34443acf1743c5cd69264?format=webp&width=800"
+                      alt="Vitor Jayme Fernandes Ferreira - CEO KRYONIX"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Vitor Jayme Fernandes Ferreira
+                  </h3>
+                  <p className="text-blue-600 font-semibold mb-4">
+                    CEO & Founder KRYONIX
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    Especialista em desenvolvimento Full Stack e Inteligência
+                    Artificial
+                  </p>
+                </div>
               </div>
             </div>
           </div>
