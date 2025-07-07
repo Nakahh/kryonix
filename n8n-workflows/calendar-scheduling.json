@@ -1,0 +1,470 @@
+{
+  "name": "KRYONIX - Calendar Scheduling",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "schedule-appointment",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "scheduling-webhook",
+      "name": "Scheduling Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "scheduling-kryonix"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar solicitação de agendamento\nconst data = $input.first().json;\n\nconst clientName = data.name || 'Cliente';\nconst clientEmail = data.email || '';\nconst clientPhone = data.phone || '';\nconst serviceType = data.serviceType || 'consultoria';\nconst preferredDate = data.preferredDate || '';\nconst preferredTime = data.preferredTime || '';\nconst message = data.message || '';\nconst duration = data.duration || 60; // minutos\n\n// Mapear tipos de serviço\nconst serviceConfig = {\n  'consultoria': {\n    duration: 60,\n    title: 'Consultoria KRYONIX',\n    description: 'Consultoria especializada em automação empresarial',\n    location: 'Online - Google Meet'\n  },\n  'demonstracao': {\n    duration: 30,\n    title: 'Demonstração da Plataforma',\n    description: 'Demonstração das funcionalidades da KRYONIX',\n    location: 'Online - Google Meet'\n  },\n  'suporte': {\n    duration: 45,\n    title: 'Suporte Técnico',\n    description: 'Suporte técnico para clientes KRYONIX',\n    location: 'Online - Google Meet'\n  },\n  'onboarding': {\n    duration: 90,\n    title: 'Onboarding Completo',\n    description: 'Configuração inicial e treinamento',\n    location: 'Online - Google Meet'\n  }\n};\n\nconst service = serviceConfig[serviceType] || serviceConfig['consultoria'];\n\n// Gerar horários disponíveis se não especificado\nconst generateAvailableSlots = () => {\n  const slots = [];\n  const today = new Date();\n  \n  // Próximos 7 dias úteis\n  for (let i = 1; i <= 7; i++) {\n    const date = new Date(today);\n    date.setDate(today.getDate() + i);\n    \n    // Skip weekends\n    if (date.getDay() === 0 || date.getDay() === 6) continue;\n    \n    // Horários: 9h às 18h\n    for (let hour = 9; hour <= 17; hour++) {\n      slots.push({\n        date: date.toISOString().split('T')[0],\n        time: `${hour.toString().padStart(2, '0')}:00`,\n        datetime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, 0)\n      });\n    }\n  }\n  \n  return slots;\n};\n\nconst availableSlots = generateAvailableSlots();\n\nreturn {\n  clientName,\n  clientEmail,\n  clientPhone,\n  serviceType,\n  service,\n  preferredDate,\n  preferredTime,\n  message,\n  availableSlots: availableSlots.slice(0, 20), // Primeiros 20 slots\n  requestId: `REQ_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,\n  createdAt: new Date().toISOString()\n};"
+      },
+      "id": "process-scheduling-request",
+      "name": "Process Scheduling Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $json.preferredDate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "leftValue": "{{ $json.preferredTime }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-preferred-time",
+      "name": "Has Preferred Time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM calendar_events WHERE DATE(start_time) = $1 AND TIME(start_time) = $2 AND status != 'cancelled'",
+        "additionalFields": {}
+      },
+      "id": "check-availability",
+      "name": "Check Availability",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [800, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      },
+      "parameters": {
+        "values": [
+          "{{ $('Process Scheduling Request').first().json.preferredDate }}",
+          "{{ $('Process Scheduling Request').first().json.preferredTime }}"
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $json.length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "slot-available",
+      "name": "Slot Available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1000, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Criar evento no Google Calendar\nconst requestData = $('Process Scheduling Request').first().json;\nconst preferredDateTime = new Date(`${requestData.preferredDate}T${requestData.preferredTime}:00`);\nconst endDateTime = new Date(preferredDateTime.getTime() + (requestData.service.duration * 60 * 1000));\n\n// Gerar link do Google Meet\nconst meetLink = `https://meet.google.com/new`;\n\nconst eventData = {\n  summary: `${requestData.service.title} - ${requestData.clientName}`,\n  description: `${requestData.service.description}\\n\\nCliente: ${requestData.clientName}\\nTelefone: ${requestData.clientPhone}\\nEmail: ${requestData.clientEmail}\\n\\nMensagem: ${requestData.message}\\n\\nLink da reunião: ${meetLink}`,\n  start: {\n    dateTime: preferredDateTime.toISOString(),\n    timeZone: 'America/Sao_Paulo'\n  },\n  end: {\n    dateTime: endDateTime.toISOString(),\n    timeZone: 'America/Sao_Paulo'\n  },\n  attendees: [\n    {\n      email: requestData.clientEmail,\n      displayName: requestData.clientName\n    },\n    {\n      email: 'contato@kryonix.com',\n      displayName: 'Equipe KRYONIX'\n    }\n  ],\n  conferenceData: {\n    createRequest: {\n      requestId: requestData.requestId,\n      conferenceSolutionKey: {\n        type: 'hangoutsMeet'\n      }\n    }\n  },\n  reminders: {\n    useDefault: false,\n    overrides: [\n      {\n        method: 'email',\n        minutes: 60\n      },\n      {\n        method: 'popup',\n        minutes: 15\n      }\n    ]\n  }\n};\n\nreturn {\n  eventData,\n  clientData: requestData,\n  meetLink\n};"
+      },
+      "id": "prepare-calendar-event",
+      "name": "Prepare Calendar Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 100]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "event",
+        "operation": "create",
+        "calendarId": "primary",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "maxAttendees": 10,
+          "sendNotifications": true,
+          "sendUpdates": "all"
+        }
+      },
+      "id": "create-google-calendar-event",
+      "name": "Create Google Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [1400, 100],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "google-calendar-kryonix",
+          "name": "Google Calendar KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "calendar_events",
+        "columns": "request_id, client_name, client_email, client_phone, service_type, start_time, end_time, google_event_id, meet_link, status, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-event-to-db",
+      "name": "Save Event to DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1600, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "agenda@kryonix.com",
+        "to": "{{ $('Prepare Calendar Event').first().json.clientData.clientEmail }}",
+        "subject": "✅ Agendamento Confirmado - KRYONIX",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Agendamento Confirmado</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; margin: 0; padding: 20px;\">\n    <div style=\"max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);\">\n        \n        <!-- Header -->\n        <div style=\"background: linear-gradient(135deg, #059669, #10b981); padding: 30px; text-align: center;\">\n            <h1 style=\"color: white; margin: 0; font-size: 28px;\">✅ Agendamento Confirmado!</h1>\n            <p style=\"color: #d1fae5; margin: 10px 0 0 0; font-size: 16px;\">Sua reunião com a KRYONIX está agendada</p>\n        </div>\n        \n        <!-- Conteúdo -->\n        <div style=\"padding: 40px 30px;\">\n            <h2 style=\"color: #059669; margin-top: 0;\">Olá {{ $('Prepare Calendar Event').first().json.clientData.clientName }}! 👋</h2>\n            \n            <p style=\"font-size: 16px; margin-bottom: 20px;\">Seu agendamento foi confirmado com sucesso! Aqui estão os detalhes:</p>\n            \n            <div style=\"background: #f0fdf4; padding: 25px; border-radius: 12px; border: 2px solid #10b981; margin: 25px 0;\">\n                <h3 style=\"color: #059669; margin-top: 0; display: flex; align-items: center;\">📅 Detalhes do Agendamento</h3>\n                <div style=\"margin: 15px 0;\">\n                    <p style=\"margin: 8px 0;\"><strong>📋 Serviço:</strong> {{ $('Prepare Calendar Event').first().json.clientData.service.title }}</p>\n                    <p style=\"margin: 8px 0;\"><strong>📅 Data:</strong> {{ $('Prepare Calendar Event').first().json.clientData.preferredDate }}</p>\n                    <p style=\"margin: 8px 0;\"><strong>⏰ Horário:</strong> {{ $('Prepare Calendar Event').first().json.clientData.preferredTime }}</p>\n                    <p style=\"margin: 8px 0;\"><strong>⏱️ Duração:</strong> {{ $('Prepare Calendar Event').first().json.clientData.service.duration }} minutos</p>\n                    <p style=\"margin: 8px 0;\"><strong>📍 Local:</strong> {{ $('Prepare Calendar Event').first().json.clientData.service.location }}</p>\n                </div>\n            </div>\n            \n            <div style=\"background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n                <h3 style=\"color: #1e40af; margin-top: 0;\">🎥 Link da Reunião Online</h3>\n                <p style=\"margin-bottom: 15px;\">Sua reunião será realizada online via Google Meet:</p>\n                <div style=\"text-align: center;\">\n                    <a href=\"{{ $('Create Google Calendar Event').first().json.hangoutLink }}\" \n                       style=\"background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;\">\n                        🎥 ENTRAR NA REUNIÃO\n                    </a>\n                </div>\n                <p style=\"margin-top: 15px; font-size: 14px; color: #6b7280;\">💡 Recomendamos testar o link alguns minutos antes do horário agendado.</p>\n            </div>\n            \n            <div style=\"background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n                <h3 style=\"color: #92400e; margin-top: 0;\">📝 O que levar para a reunião:</h3>\n                <ul style=\"margin: 0; padding-left: 20px; color: #92400e;\">\n                    <li>Informações sobre seu negócio atual</li>\n                    <li>Principais desafios que enfrenta</li>\n                    <li>Objetivos que deseja alcançar</li>\n                    <li>Dúvidas sobre automação empresarial</li>\n                </ul>\n            </div>\n            \n            <div style=\"background: #f3e8ff; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n                <h3 style=\"color: #7c3aed; margin-top: 0;\">⏰ Lembretes Automáticos</h3>\n                <p style=\"margin: 0; color: #7c3aed;\">Você receberá lembretes automáticos:</p>\n                <ul style=\"margin: 10px 0 0 0; padding-left: 20px; color: #7c3aed;\">\n                    <li>📧 Por email: 1 hora antes</li>\n                    <li>🔔 Notificação: 15 minutos antes</li>\n                </ul>\n            </div>\n            \n            <div style=\"text-align: center; margin: 30px 0;\">\n                <p style=\"margin-bottom: 15px; font-weight: bold;\">Precisa reagendar ou tem dúvidas?</p>\n                <a href=\"https://wa.me/5517981805327\" \n                   style=\"background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold; margin: 0 10px 10px 0;\">\n                    💬 WhatsApp\n                </a>\n                <a href=\"mailto:contato@kryonix.com\" \n                   style=\"background: #6b7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;\">\n                    📧 Email\n                </a>\n            </div>\n        </div>\n        \n        <!-- Footer -->\n        <div style=\"background: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;\">\n            <p style=\"margin: 0; color: #6b7280; font-size: 14px;\">KRYONIX - Automação Empresarial com IA</p>\n            <p style=\"margin: 5px 0 0 0; color: #6b7280; font-size: 12px;\">CEO: Vitor Jayme Fernandes Ferreira | WhatsApp: (17) 9 8180-5327</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "send-confirmation-email",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1800, 100],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.evolution-api.com/message/sendText",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "{{ $credentials.evolutionApi.apiKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "{{ $('Prepare Calendar Event').first().json.clientData.clientPhone }}"
+            },
+            {
+              "name": "text",
+              "value": "✅ *AGENDAMENTO CONFIRMADO!*\\n\\n👋 Olá {{ $('Prepare Calendar Event').first().json.clientData.clientName }}!\\n\\nSeu agendamento foi confirmado:\\n\\n📋 *Serviço:* {{ $('Prepare Calendar Event').first().json.clientData.service.title }}\\n📅 *Data:* {{ $('Prepare Calendar Event').first().json.clientData.preferredDate }}\\n⏰ *Horário:* {{ $('Prepare Calendar Event').first().json.clientData.preferredTime }}\\n⏱️ *Duração:* {{ $('Prepare Calendar Event').first().json.clientData.service.duration }} min\\n\\n🎥 *Link da Reunião:*\\n{{ $('Create Google Calendar Event').first().json.hangoutLink }}\\n\\n📧 Você também receberá um email com todos os detalhes e lembretes automáticos.\\n\\n❓ Dúvidas? Responda esta mensagem!\\n\\n🚀 *KRYONIX* - Automação Empresarial\"\\n            }\n          ]\n        },\n        \"options\": {}\n      },\n      \"id\": \"send-whatsapp-confirmation\",\n      \"name\": \"Send WhatsApp Confirmation\",\n      \"type\": \"n8n-nodes-base.httpRequest\",\n      \"typeVersion\": 4.1,\n      \"position\": [2000, 100],\n      \"credentials\": {\n        \"httpHeaderAuth\": {\n          \"id\": \"evolution-api-kryonix\",\n          \"name\": \"Evolution API KRYONIX\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"from\": \"agenda@kryonix.com\",\n        \"to\": \"{{ $('Process Scheduling Request').first().json.clientEmail }}\",\n        \"subject\": \"❌ Horário Indisponível - KRYONIX\",\n        \"emailType\": \"html\",\n        \"message\": \"Olá {{ $('Process Scheduling Request').first().json.clientName }}!\\n\\nInfelizmente o horário solicitado não está disponível.\\n\\nVamos encontrar um horário que funcione para você!\\n\\nEntre em contato conosco:\\nWhatsApp: (17) 9 8180-5327\\nEmail: contato@kryonix.com\"\n      },\n      \"id\": \"send-unavailable-notification\",\n      \"name\": \"Send Unavailable Notification\",\n      \"type\": \"n8n-nodes-base.emailSend\",\n      \"typeVersion\": 2,\n      \"position\": [1200, 300],\n      \"credentials\": {\n        \"smtp\": {\n          \"id\": \"smtp-kryonix\",\n          \"name\": \"SMTP KRYONIX\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"from\": \"agenda@kryonix.com\",\n        \"to\": \"{{ $json.clientEmail }}\",\n        \"subject\": \"📅 Horários Disponíveis - KRYONIX\",\n        \"emailType\": \"html\",\n        \"message\": \"Olá {{ $json.clientName }}!\\n\\nRecebemos sua solicitação de agendamento.\\n\\nComo você não especificou um horário, aqui estão nossos próximos horários disponíveis:\\n\\n{% for slot in $json.availableSlots.slice(0, 10) %}\\n📅 {{ slot.date }} às {{ slot.time }}\\n{% endfor %}\\n\\nPara agendar, responda este email ou entre em contato:\\nWhatsApp: (17) 9 8180-5327\"\n      },\n      \"id\": \"send-available-slots\",\n      \"name\": \"Send Available Slots\",\n      \"type\": \"n8n-nodes-base.emailSend\",\n      \"typeVersion\": 2,\n      \"position\": [800, 400],\n      \"credentials\": {\n        \"smtp\": {\n          \"id\": \"smtp-kryonix\",\n          \"name\": \"SMTP KRYONIX\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"respondWith\": \"json\",\n        \"responseBody\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Agendamento processado com sucesso\\\",\\n  \\\"eventId\\\": \\\"{{ $('Create Google Calendar Event').first().json.id }}\\\",\\n  \\\"meetLink\\\": \\\"{{ $('Create Google Calendar Event').first().json.hangoutLink }}\\\",\\n  \\\"dateTime\\\": \\\"{{ $('Prepare Calendar Event').first().json.clientData.preferredDate }} {{ $('Prepare Calendar Event').first().json.clientData.preferredTime }}\\\"\\n}\",\n        \"options\": {}\n      },\n      \"id\": \"success-response\",\n      \"name\": \"Success Response\",\n      \"type\": \"n8n-nodes-base.respondToWebhook\",\n      \"typeVersion\": 1,\n      \"position\": [2200, 100]\n    },\n    {\n      \"parameters\": {\n        \"respondWith\": \"json\",\n        \"responseBody\": \"{\\n  \\\"success\\\": false,\\n  \\\"message\\\": \\\"Horário indisponível\\\",\\n  \\\"availableSlots\\\": {{ JSON.stringify($('Process Scheduling Request').first().json.availableSlots.slice(0, 10)) }}\\n}\",\n        \"options\": {}\n      },\n      \"id\": \"unavailable-response\",\n      \"name\": \"Unavailable Response\",\n      \"type\": \"n8n-nodes-base.respondToWebhook\",\n      \"typeVersion\": 1,\n      \"position\": [1400, 300]\n    },\n    {\n      \"parameters\": {\n        \"respondWith\": \"json\",\n        \"responseBody\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Horários disponíveis enviados\\\",\\n  \\\"availableSlots\\\": {{ JSON.stringify($json.availableSlots) }}\\n}\",\n        \"options\": {}\n      },\n      \"id\": \"slots-response\",\n      \"name\": \"Slots Response\",\n      \"type\": \"n8n-nodes-base.respondToWebhook\",\n      \"typeVersion\": 1,\n      \"position\": [1000, 400]\n    }\n  ],\n  \"connections\": {\n    \"Scheduling Webhook\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Process Scheduling Request\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Process Scheduling Request\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Has Preferred Time?\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Has Preferred Time?\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Check Availability\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ],\n        [\n          {\n            \"node\": \"Send Available Slots\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Check Availability\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Slot Available?\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Slot Available?\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Prepare Calendar Event\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ],\n        [\n          {\n            \"node\": \"Send Unavailable Notification\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Prepare Calendar Event\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Create Google Calendar Event\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Create Google Calendar Event\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Save Event to DB\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Save Event to DB\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Send Confirmation Email\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Send Confirmation Email\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Send WhatsApp Confirmation\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Send WhatsApp Confirmation\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Success Response\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Send Unavailable Notification\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Unavailable Response\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Send Available Slots\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Slots Response\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"createdAt\": \"2024-01-20T10:00:00.000Z\",\n  \"updatedAt\": \"2024-01-20T10:00:00.000Z\",\n  \"settings\": {\n    \"executionOrder\": \"v1\"\n  },\n  \"staticData\": null,\n  \"tags\": [\"kryonix\", \"calendar\", \"scheduling\"],\n  \"triggerCount\": 0,\n  \"versionId\": \"1\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-whatsapp-confirmation",
+      "name": "Send WhatsApp Confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2000, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "evolution-api-kryonix",
+          "name": "Evolution API KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "agenda@kryonix.com",
+        "to": "{{ $('Process Scheduling Request').first().json.clientEmail }}",
+        "subject": "❌ Horário Indisponível - KRYONIX",
+        "emailType": "html",
+        "message": "Olá {{ $('Process Scheduling Request').first().json.clientName }}!\n\nInfelizmente o horário solicitado não está disponível.\n\nVamos encontrar um horário que funcione para você!\n\nEntre em contato conosco:\nWhatsApp: (17) 9 8180-5327\nEmail: contato@kryonix.com"
+      },
+      "id": "send-unavailable-notification",
+      "name": "Send Unavailable Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 300],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "agenda@kryonix.com",
+        "to": "{{ $json.clientEmail }}",
+        "subject": "📅 Horários Disponíveis - KRYONIX",
+        "emailType": "html",
+        "message": "Olá {{ $json.clientName }}!\n\nRecebemos sua solicitação de agendamento.\n\nComo você não especificou um horário, aqui estão nossos próximos horários disponíveis:\n\n{% for slot in $json.availableSlots.slice(0, 10) %}\n📅 {{ slot.date }} às {{ slot.time }}\n{% endfor %}\n\nPara agendar, responda este email ou entre em contato:\nWhatsApp: (17) 9 8180-5327"
+      },
+      "id": "send-available-slots",
+      "name": "Send Available Slots",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [800, 400],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Agendamento processado com sucesso\",\n  \"eventId\": \"{{ $('Create Google Calendar Event').first().json.id }}\",\n  \"meetLink\": \"{{ $('Create Google Calendar Event').first().json.hangoutLink }}\",\n  \"dateTime\": \"{{ $('Prepare Calendar Event').first().json.clientData.preferredDate }} {{ $('Prepare Calendar Event').first().json.clientData.preferredTime }}\"\n}",
+        "options": {}
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2200, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"message\": \"Horário indisponível\",\n  \"availableSlots\": {{ JSON.stringify($('Process Scheduling Request').first().json.availableSlots.slice(0, 10)) }}\n}",
+        "options": {}
+      },
+      "id": "unavailable-response",
+      "name": "Unavailable Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Horários disponíveis enviados\",\n  \"availableSlots\": {{ JSON.stringify($json.availableSlots) }}\n}",
+        "options": {}
+      },
+      "id": "slots-response",
+      "name": "Slots Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1000, 400]
+    }
+  ],
+  "connections": {
+    "Scheduling Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Scheduling Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Scheduling Request": {
+      "main": [
+        [
+          {
+            "node": "Has Preferred Time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Preferred Time?": {
+      "main": [
+        [
+          {
+            "node": "Check Availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Available Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "main": [
+        [
+          {
+            "node": "Slot Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slot Available?": {
+      "main": [
+        [
+          {
+            "node": "Prepare Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Unavailable Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Create Google Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Save Event to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Event to DB": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Unavailable Notification": {
+      "main": [
+        [
+          {
+            "node": "Unavailable Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Available Slots": {
+      "main": [
+        [
+          {
+            "node": "Slots Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-20T10:00:00.000Z",
+  "updatedAt": "2024-01-20T10:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["kryonix", "calendar", "scheduling"],
+  "triggerCount": 0,
+  "versionId": "1"
+}
