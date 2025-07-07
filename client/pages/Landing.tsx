@@ -410,6 +410,17 @@ const Landing = () => {
     seconds: 32,
   });
 
+  // Estados para IA Consultant
+  const [aiMessages, setAiMessages] = useState([
+    {
+      type: "ai",
+      text: "👋 Olá! Sou sua consultora de automação. Conte-me sobre seu negócio e vou recomendar os módulos ideais para você!",
+    },
+  ]);
+  const [userInput, setUserInput] = useState("");
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState([]);
+
   // Funções para controlar seleção de módulos
   const toggleModule = (moduleId: number) => {
     setSelectedModules((prev) =>
