@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +16,14 @@ import {
   BarChart3,
   Zap,
   Shield,
+  Code,
+  Cpu,
+  Rocket,
+  Award,
+  Users,
+  Clock,
+  HeadphonesIcon,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
