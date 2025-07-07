@@ -125,7 +125,7 @@ const Landing = () => {
       name: "TESTE GRÁTIS",
       price: 0,
       originalPrice: 0,
-      period: "/14 dias",
+      period: "/7 dias",
       features: [
         "WhatsApp Business básico",
         "IA personalizada limitada",
