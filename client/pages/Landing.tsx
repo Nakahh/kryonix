@@ -275,16 +275,18 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Button
               size="lg"
-              className="text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              onClick={() => navigate("/quotation")}
+              className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
+              onClick={() =>
+                window.open("https://wa.me/5517981805327", "_blank")
+              }
             >
-              <MessageSquare className="mr-2 h-5 w-5" />
+              <MessageSquare className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Conversar no WhatsApp
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-4 border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+              className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 w-full sm:w-auto"
               onClick={() =>
                 window.open("https://instagram.com/kryon.ix", "_blank")
               }
@@ -292,17 +294,17 @@ const Landing = () => {
               @kryon.ix
             </Button>
           </div>
-          <div className="mt-12 flex justify-center space-x-8 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Award className="w-5 h-5 mr-2 text-blue-600" />
+          <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto">
+            <div className="flex items-center justify-center">
+              <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
               Full Stack Developer
             </div>
-            <div className="flex items-center">
-              <Cpu className="w-5 h-5 mr-2 text-purple-600" />
+            <div className="flex items-center justify-center">
+              <Cpu className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
               AI Specialist
             </div>
-            <div className="flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-orange-600" />
+            <div className="flex items-center justify-center">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-orange-600" />
               Automation Expert
             </div>
           </div>
