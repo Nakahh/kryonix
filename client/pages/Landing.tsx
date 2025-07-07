@@ -1337,35 +1337,118 @@ const Landing = () => {
                     </ul>
                   </div>
 
+                  {/* Urgência Final */}
+                  <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-lg mb-6 text-center">
+                    <h3 className="text-xl font-bold mb-2">
+                      ⚠️ ÚLTIMA CHANCE!
+                    </h3>
+                    <p className="mb-3">
+                      Esta oferta expira em{" "}
+                      {String(timeLeft.hours).padStart(2, "0")}:
+                      {String(timeLeft.minutes).padStart(2, "0")}:
+                      {String(timeLeft.seconds).padStart(2, "0")}
+                    </p>
+                    <p className="text-sm opacity-90">
+                      Após o prazo, o desconto some e você pagará até{" "}
+                      <strong>
+                        R$ {(calculateOriginalTotal() * 1.5).toLocaleString()}
+                        /mês
+                      </strong>
+                    </p>
+                  </div>
+
+                  {/* Social Proof Extrema */}
+                  <div className="bg-green-50 p-6 rounded-lg mb-8 border border-green-200">
+                    <h3 className="text-lg font-bold text-green-900 mb-4 text-center">
+                      🎉 Últimas Empresas que Adquiriram (Hoje):
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>• TechStart Ltda - São Paulo</span>
+                        <span className="text-green-600">há 7 min</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>• Clínica Dr. Silva - Rio de Janeiro</span>
+                        <span className="text-green-600">há 12 min</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>• MegaStore Online - Brasília</span>
+                        <span className="text-green-600">há 18 min</span>
+                      </div>
+                      <div className="text-center mt-3 font-semibold text-green-700">
+                        +47 empresas adquiriram hoje!
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Garantias Stack */}
+                  <div className="grid md:grid-cols-3 gap-4 mb-8">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                      <div className="text-sm font-bold">Garantia 60 Dias</div>
+                      <div className="text-xs text-gray-600">
+                        Dinheiro de volta
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <Award className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                      <div className="text-sm font-bold">Setup Gratuito</div>
+                      <div className="text-xs text-gray-600">
+                        Valor R$ 2.500
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <Users className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                      <div className="text-sm font-bold">Suporte VIP</div>
+                      <div className="text-xs text-gray-600">
+                        Consultor dedicado
+                      </div>
+                    </div>
+                  </div>
+
                   {/* CTAs Finais */}
                   <div className="text-center space-y-4">
                     <Button
                       size="lg"
-                      className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-xl py-6"
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-xl py-8 animate-pulse shadow-2xl"
                       onClick={() => navigate("/register")}
                     >
-                      🚀 COMEÇAR TESTE GRÁTIS DE 7 DIAS
+                      🚀 GARANTIR MINHA VAGA - 14 DIAS GRÁTIS
                     </Button>
+                    <p className="text-lg font-bold text-green-600">
+                      Economia total: R$ {getTotalSavings()}/mês = R${" "}
+                      {(getTotalSavings() * 12).toLocaleString()}/ano
+                    </p>
                     <p className="text-sm text-gray-600">
-                      Sem cartão de crédito • Cancele quando quiser • Setup
-                      gratuito
+                      ✅ Sem cartão de crédito • ✅ Cancele quando quiser • ✅
+                      Setup + treinamento gratuito
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <div className="bg-yellow-100 p-4 rounded-lg border border-yellow-300">
+                      <p className="text-sm text-yellow-800 font-semibold">
+                        🎁 <strong>BÔNUS ESPECIAL:</strong> Primeiras 50
+                        empresas ganham consultoria estratégica gratuita (valor
+                        R$ 5.000)
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                       <Button
                         variant="outline"
                         onClick={() => setShowCheckout(false)}
+                        className="border-gray-300"
                       >
                         ← Voltar e Editar
                       </Button>
                       <Button
                         variant="outline"
+                        className="border-green-500 text-green-600 hover:bg-green-50"
                         onClick={() =>
                           window.open("https://wa.me/5517981805327", "_blank")
                         }
                       >
                         <MessageSquare className="mr-2 h-4 w-4" />
-                        Tirar Dúvidas
+                        Falar com Especialista (GRÁTIS)
                       </Button>
                     </div>
                   </div>
