@@ -483,8 +483,12 @@ const Landing = () => {
               <div className="grid md:grid-cols-2">
                 <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 text-white flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-32 h-32 bg-white/20 rounded-full mx-auto mb-6 flex items-center justify-center">
-                      <Users className="h-16 w-16 text-white" />
+                    <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                      <img
+                        src="https://cdn.builder.io/api/v1/image/assets%2F48d3800139714cc4a8c7b3af42e151ce%2F7069598011f34443acf1743c5cd69264?format=webp&width=800"
+                        alt="Vitor Jayme Fernandes Ferreira - CEO KRYONIX"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <h3 className="text-2xl font-bold mb-2">Vitor Jayme</h3>
                     <p className="text-blue-100">CEO Kryonix</p>
