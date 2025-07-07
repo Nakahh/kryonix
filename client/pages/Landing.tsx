@@ -371,7 +371,7 @@ const Landing = () => {
       category: "Geração",
       discount: "67% OFF",
       urgent: true,
-      value: "�� 500+ leads qualificados/mês",
+      value: "🎯 500+ leads qualificados/mês",
       testimonial: "1000 leads qualificados no primeiro mês - Diego Santos",
     },
     {
@@ -1053,13 +1053,6 @@ const Landing = () => {
                         <div className="absolute -top-3 -right-3 z-10">
                           <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                             {module.discount}
-                          </span>
-                        </div>
-                      )}
-                      {module.limited && (
-                        <div className="absolute top-3 left-3 z-10">
-                          <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-                            🏃‍♂️ {module.limited}
                           </span>
                         </div>
                       )}
