@@ -133,10 +133,10 @@ const ChatBubble = () => {
   };
 
   const quickActions = [
-    { label: "Ver Preços", action: "quanto custa" },
-    { label: "Começar Grátis", action: "teste grátis" },
-    { label: "WhatsApp", action: "conectar whatsapp" },
-    { label: "Orçamento Site", action: "orçamento site" },
+    { label: "Nossos Serviços", action: "quais serviços vocês fazem" },
+    { label: "Orçamento", action: "quero um orçamento" },
+    { label: "WhatsApp", action: "qual o whatsapp" },
+    { label: "Portfolio", action: "ver projetos" },
   ];
 
   const handleQuickAction = (action: string) => {
