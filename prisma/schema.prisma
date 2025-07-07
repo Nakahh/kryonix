@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String
+  company     String?
+  phone       String?
+  plan        Plan     @default(FREE)
+  trialEndsAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Integrations
+  whatsappConnected Boolean @default(false)
+  whatsappQRCode    String?
+  emailConnected    Boolean @default(false)
+  calendarConnected Boolean @default(false)
+  
+  // Business info
+  businessType String?
+  welcomeMessage String?
+  workingHours String?
+  
+  // N8N workflow
+  workflowId String?
+  
+  // Relations
+  quotations Quotation[]
+  payments   Payment[]
+  activities Activity[]
+  
+  @@map("users")
+}
+
+model Quotation {
+  id                String   @id @default(uuid())
+  userId            String?
+  customerName      String
+  customerEmail     String
+  customerPhone     String?
+  
+  // Site requirements
+  siteType          String   // institutional, ecommerce, system
+  pages             Int      @default(1)
+  hasAdminPanel     Boolean  @default(false)
+  hasPaymentIntegration Boolean @default(false)
+  hasSupport        Boolean  @default(false)
+  additionalFeatures String?
+  
+  // Pricing
+  estimatedPrice    Float
+  finalPrice        Float?
+  status            QuotationStatus @default(PENDING)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  user              User?    @relation(fields: [userId], references: [id])
+  
+  @@map("quotations")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  userId        String
+  amount        Float
+  type          PaymentType
+  status        PaymentStatus @default(PENDING)
+  stripeId      String?
+  pixCode       String?
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  user          User          @relation(fields: [userId], references: [id])
+  
+  @@map("payments")
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // whatsapp_message, email_sent, calendar_event, etc.
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@map("activities")
+}
+
+model AdminMetrics {
+  id              String   @id @default(uuid())
+  totalUsers      Int      @default(0)
+  activeUsers     Int      @default(0)
+  totalRevenue    Float    @default(0)
+  quotationsToday Int      @default(0)
+  date            DateTime @default(now()) @unique
+  
+  @@map("admin_metrics")
+}
+
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+}
+
+enum QuotationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_DEVELOPMENT
+  COMPLETED
+}
+
+enum PaymentType {
+  SUBSCRIPTION
+  QUOTATION
+  ONE_TIME
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
