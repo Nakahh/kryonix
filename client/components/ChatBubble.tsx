@@ -175,7 +175,7 @@ const ChatBubble = () => {
                 <Bot className="h-4 w-4 text-white" />
               </div>
               <div>
-                <CardTitle className="text-sm">Assistente AutoBiz</CardTitle>
+                <CardTitle className="text-sm">Assistente KRYONIX</CardTitle>
                 <div className="flex items-center space-x-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-xs text-gray-500">Online</span>
