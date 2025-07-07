@@ -133,11 +133,7 @@ const Dashboard = () => {
       icon: <Bot className="h-6 w-6" />,
       connected: user.aiConfigured,
       color: "bg-purple-500",
-      features: [
-        "Prompts customizáveis",
-        "Treinamento",
-        "Respostas contextuais",
-      ],
+      features: ["Prompts customizáveis", "Treinamento", "Respostas contextuais"],
       status: "Configuração necessária",
       setupTime: "5 minutos",
     },
@@ -292,9 +288,7 @@ const Dashboard = () => {
                 {Object.entries(systemStatus).map(([key, status]) => (
                   <div key={key} className="flex items-center space-x-1">
                     {getStatusIcon(status)}
-                    <span className="text-xs text-gray-600 capitalize">
-                      {key}
-                    </span>
+                    <span className="text-xs text-gray-600 capitalize">{key}</span>
                   </div>
                 ))}
               </div>
@@ -335,12 +329,8 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm">
-                    Mensagens Processadas
-                  </p>
-                  <p className="text-3xl font-bold">
-                    {metrics.messagesThisMonth.toLocaleString()}
-                  </p>
+                  <p className="text-green-100 text-sm">Mensagens Processadas</p>
+                  <p className="text-3xl font-bold">{metrics.messagesThisMonth.toLocaleString()}</p>
                   <p className="text-green-100 text-xs mt-1">Este mês</p>
                 </div>
                 <MessageSquare className="h-10 w-10 text-green-200" />
@@ -354,9 +344,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-blue-100 text-sm">Leads Capturados</p>
                   <p className="text-3xl font-bold">{metrics.leadsGenerated}</p>
-                  <p className="text-blue-100 text-xs mt-1">
-                    ↗ +23% vs mês anterior
-                  </p>
+                  <p className="text-blue-100 text-xs mt-1">↗ +23% vs mês anterior</p>
                 </div>
                 <Users className="h-10 w-10 text-blue-200" />
               </div>
@@ -368,12 +356,8 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100 text-sm">Agendamentos</p>
-                  <p className="text-3xl font-bold">
-                    {metrics.appointmentsScheduled}
-                  </p>
-                  <p className="text-purple-100 text-xs mt-1">
-                    Taxa: {metrics.conversionRate}%
-                  </p>
+                  <p className="text-3xl font-bold">{metrics.appointmentsScheduled}</p>
+                  <p className="text-purple-100 text-xs mt-1">Taxa: {metrics.conversionRate}%</p>
                 </div>
                 <Calendar className="h-10 w-10 text-purple-200" />
               </div>
@@ -385,12 +369,8 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-yellow-100 text-sm">Receita Gerada</p>
-                  <p className="text-3xl font-bold">
-                    R$ {metrics.revenue.toLocaleString()}
-                  </p>
-                  <p className="text-yellow-100 text-xs mt-1">
-                    Resp. média: {metrics.averageResponseTime}
-                  </p>
+                  <p className="text-3xl font-bold">R$ {metrics.revenue.toLocaleString()}</p>
+                  <p className="text-yellow-100 text-xs mt-1">Resp. média: {metrics.averageResponseTime}</p>
                 </div>
                 <TrendingUp className="h-10 w-10 text-yellow-200" />
               </div>
@@ -398,66 +378,77 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Integration Modules */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Módulos de Automação
-            </h2>
-            <div className="space-y-4">
-              {integrationModules.map((module) => (
-                <Card
-                  key={module.id}
-                  className={`transition-all duration-200 hover:shadow-md ${
-                    module.connected ? "ring-2 ring-green-200" : ""
-                  }`}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-4">
-                        <div
-                          className={`${module.color} p-3 rounded-lg text-white`}
-                        >
-                          {module.icon}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="font-semibold text-gray-900">
-                              {module.title}
-                            </h3>
-                            {module.connected && (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            )}
-                          </div>
-                          <p className="text-gray-600 text-sm mb-3">
-                            {module.description}
-                          </p>
-                          <div className="flex flex-wrap gap-1">
-                            {module.features.map((feature, index) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {feature}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <Button
-                        variant={module.connected ? "outline" : "default"}
-                        size="sm"
-                        onClick={() => connectIntegration(module.id)}
-                      >
-                        {module.connected ? "Configurar" : "Conectar"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Integration Modules - Grid Layout Moderno */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Módulos de Automação</h2>
+            <Button variant="outline" onClick={() => navigate("/settings")}>
+              <Settings className="h-4 w-4 mr-2" />
+              Ver Todas Configurações
+            </Button>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {integrationModules.map((module) => (
+              <Card
+                key={module.id}
+                className={`group hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 ${
+                  module.connected
+                    ? "ring-2 ring-green-400 bg-gradient-to-br from-green-50 to-white"
+                    : "hover:ring-2 hover:ring-blue-300"
+                }`}
+                onClick={() => connectIntegration(module.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`${module.color} p-3 rounded-xl text-white group-hover:scale-110 transition-transform`}>
+                      {module.icon}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {module.connected ? (
+                        <Badge className="bg-green-100 text-green-800">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Ativo
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {module.setupTime}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    {module.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    {module.description}
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1">
+                      {module.features.slice(0, 2).map((feature, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {feature}
+                        </Badge>
+                      ))}
+                      {module.features.length > 2 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{module.features.length - 2}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="pt-2 border-t border-gray-100">
+                      <p className="text-xs text-gray-500">{module.status}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
 
           {/* Activity Feed */}
           <div>
