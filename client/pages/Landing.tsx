@@ -292,43 +292,108 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Como Funciona */}
-      <section className="py-20 bg-white">
+      {/* Sobre a Kryonix */}
+      <section id="sobre" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
-            Como Funciona?
-          </h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "1",
-                title: "Crie sua conta",
-                desc: "Cadastro rápido e simples",
-              },
-              {
-                step: "2",
-                title: "Responda 3 perguntas",
-                desc: "Sobre seu tipo de negócio",
-              },
-              {
-                step: "3",
-                title: "IA cria tudo automaticamente",
-                desc: "Integrações prontas em segundos",
-              },
-              {
-                step: "4",
-                title: "Comece a automatizar",
-                desc: "Atenda clientes 24/7 com IA",
-              },
-            ].map((item, index) => (
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Sobre a Kryonix
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Nossa Missão
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                A Kryonix nasceu com o propósito de democratizar a tecnologia
+              </h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Criamos soluções digitais que transformam negócios e melhoram a
+                vida das pessoas. Liderada por{" "}
+                <strong>Vitor Jayme Fernandes Ferreira</strong>, nossa equipe
+                combina expertise técnica com visão estratégica para entregar
+                projetos que superam expectativas.
+              </p>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                Especializamos em desenvolvimento full-stack, inteligência
+                artificial e automação, sempre utilizando as tecnologias mais
+                modernas do mercado.
+              </p>
+              <div className="flex space-x-4">
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() =>
+                    window.open("https://wa.me/5517981805327", "_blank")
+                  }
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  WhatsApp
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.open("https://instagram.com/kryon.ix", "_blank")
+                  }
+                >
+                  Instagram
+                </Button>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8">
+                <img
+                  src="https://cdn.builder.io/api/v1/assets/48d3800139714cc4a8c7b3af42e151ce/logo-kryonix-abc9fe?format=webp&width=800"
+                  alt="Kryonix Logo"
+                  className="w-full max-w-md mx-auto"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Estatísticas */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
+            {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                  {item.step}
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  {stat.number}
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-gray-600">{item.desc}</p>
+                <div className="text-gray-600 font-medium">{stat.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Por que escolher a Kryonix */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+            Por que escolher a Kryonix?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <Award className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Qualidade Garantida</h3>
+                <p className="text-gray-600">Código limpo e documentado</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <Clock className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Entrega Rápida</h3>
+                <p className="text-gray-600">Projetos no prazo</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <HeadphonesIcon className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Suporte Completo</h3>
+                <p className="text-gray-600">Acompanhamento pós-entrega</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
