@@ -274,8 +274,7 @@ const Landing = () => {
       price: 147,
       originalPrice: 497,
       period: "/mês",
-      description:
-        "🧠 INTELIG��NCIA ARTIFICIAL PREDITIVA - Antecipa tendências",
+      description: "🧠 INTELIGÊNCIA ARTIFICIAL PREDITIVA - Antecipa tendências",
       features: [
         "Machine Learning personalizado",
         "Previsão de vendas com 94% precisão",
@@ -465,7 +464,7 @@ const Landing = () => {
     "Prestadores de Serviços",
     "Academias e Personal Trainers",
     "Advogados e Contadores",
-    "Corretores de Im��veis",
+    "Corretores de Imóveis",
   ];
 
   // Loading Screen
@@ -1040,66 +1039,71 @@ const Landing = () => {
                   sentido para você.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-8xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
                   {modules.map((module) => (
                     <Card
                       key={module.id}
                       className={`relative cursor-pointer transition-all duration-300 ${
                         selectedModules.includes(module.id)
-                          ? "border-green-500 shadow-lg bg-green-50"
-                          : "hover:shadow-md"
-                      }`}
+                          ? "border-green-500 shadow-xl bg-gradient-to-br from-green-50 to-green-100 scale-105"
+                          : "hover:shadow-lg hover:scale-102"
+                      } ${module.urgent ? "border-2 border-red-400 shadow-lg" : ""}`}
                       onClick={() => toggleModule(module.id)}
                     >
                       {module.urgent && (
-                        <div className="absolute -top-2 -left-2">
-                          <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-                            🔥 URGENTE
+                        <div className="absolute -top-3 -left-3 z-10">
+                          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-bounce shadow-lg">
+                            🔥 MAIS VENDIDO
                           </span>
                         </div>
                       )}
                       {module.discount && (
-                        <div className="absolute -top-2 -right-2">
-                          <span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        <div className="absolute -top-3 -right-3 z-10">
+                          <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                             {module.discount}
                           </span>
                         </div>
                       )}
+                      {module.limited && (
+                        <div className="absolute top-3 left-3 z-10">
+                          <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
+                            🏃‍♂️ {module.limited}
+                          </span>
+                        </div>
+                      )}
 
-                      <CardHeader className="pb-2">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            {module.icon}
-                            <div>
-                              <CardTitle className="text-sm font-bold">
-                                {module.name}
-                              </CardTitle>
-                              <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">
-                                {module.category}
-                              </span>
-                            </div>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center space-x-3 mb-3">
+                          {module.icon}
+                          <div>
+                            <CardTitle className="text-lg font-bold">
+                              {module.name}
+                            </CardTitle>
+                            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                              {module.category}
+                            </span>
                           </div>
                         </div>
 
-                        <div className="text-center">
-                          <div className="text-sm text-gray-500 line-through">
+                        <div className="text-center mb-3">
+                          <div className="text-lg text-gray-500 line-through">
                             R$ {module.originalPrice}/mês
                           </div>
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className="text-3xl font-bold text-blue-600">
                             R$ {module.price}
                           </div>
-                          <div className="text-xs text-green-600 font-bold">
+                          <div className="text-sm text-green-600 font-bold bg-green-100 px-2 py-1 rounded-full mt-1">
                             {module.value}
                           </div>
                         </div>
                       </CardHeader>
 
-                      <CardContent className="pt-2">
-                        <CardDescription className="text-xs mb-3 text-center">
+                      <CardContent className="pt-0">
+                        <CardDescription className="text-sm mb-4 text-center font-medium">
                           {module.description}
                         </CardDescription>
 
-                        <ul className="space-y-1 mb-4">
+                        <ul className="space-y-2 mb-4">
                           {module.features
                             .slice(0, 3)
                             .map((feature, featureIndex) => (
@@ -1107,29 +1111,39 @@ const Landing = () => {
                                 key={featureIndex}
                                 className="flex items-center"
                               >
-                                <Check className="h-3 w-3 text-green-600 mr-1 flex-shrink-0" />
-                                <span className="text-xs text-gray-700">
+                                <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                                <span className="text-sm text-gray-700">
                                   {feature}
                                 </span>
                               </li>
                             ))}
                           {module.features.length > 3 && (
-                            <li className="text-xs text-gray-500 text-center">
-                              +{module.features.length - 3} recursos extras
+                            <li className="text-sm text-blue-600 text-center font-semibold">
+                              +{module.features.length - 3} recursos premium
+                              extras
                             </li>
                           )}
                         </ul>
 
+                        {/* Depoimento */}
+                        {module.testimonial && (
+                          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4">
+                            <p className="text-xs italic text-gray-700">
+                              "{module.testimonial}"
+                            </p>
+                          </div>
+                        )}
+
                         <div
-                          className={`w-full p-2 rounded text-center text-xs font-bold ${
+                          className={`w-full p-3 rounded-lg text-center text-sm font-bold transition-all ${
                             selectedModules.includes(module.id)
-                              ? "bg-green-600 text-white"
-                              : "bg-gray-100 text-gray-600"
+                              ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg"
+                              : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
                           }`}
                         >
                           {selectedModules.includes(module.id)
-                            ? "✓ Adicionado"
-                            : "Clique para Adicionar"}
+                            ? "✅ ADICIONADO AO SEU PLANO"
+                            : "🚀 ADICIONAR AGORA"}
                         </div>
                       </CardContent>
                     </Card>
