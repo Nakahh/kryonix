@@ -27,7 +27,7 @@ const ChatBubble = () => {
     {
       id: "1",
       content:
-        "Olá! 👋 Sou sua assistente virtual. Como posso ajudar você hoje?",
+        "Olá! 👋 Sou a assistente virtual da KRYONIX. Como posso ajudar você hoje?",
       isBot: true,
       timestamp: new Date(),
     },
