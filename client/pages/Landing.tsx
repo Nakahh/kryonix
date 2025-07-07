@@ -570,7 +570,7 @@ const Landing = () => {
           <p className="text-xl text-gray-600 text-center mb-12">
             Comece grátis e escale conforme seu negócio cresce
           </p>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
             {plans.map((plan, index) => (
               <Card
                 key={index}
