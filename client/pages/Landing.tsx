@@ -460,6 +460,86 @@ const Landing = () => {
     return calculateOriginalTotal() - calculateTotal();
   };
 
+  // Função para processar mensagem da IA
+  const processAiMessage = async (userMessage: string) => {
+    setIsAiTyping(true);
+
+    // Simular processamento da IA
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    const lowerMessage = userMessage.toLowerCase();
+    let aiResponse = "";
+    let recommendations = [];
+
+    // Lógica simples de recomendação baseada em palavras-chave
+    if (
+      lowerMessage.includes("restaurante") ||
+      lowerMessage.includes("lanchonete") ||
+      lowerMessage.includes("comida")
+    ) {
+      aiResponse =
+        "🍽️ Perfeito! Para restaurantes, recomendo: WhatsApp para pedidos automáticos, Google Calendar para reservas e E-mail Marketing para promoções. Quantas mesas você tem aproximadamente?";
+      recommendations = [1, 3, 6]; // WhatsApp, Calendar, Email
+    } else if (
+      lowerMessage.includes("clínica") ||
+      lowerMessage.includes("médico") ||
+      lowerMessage.includes("consultório")
+    ) {
+      aiResponse =
+        "🏥 Excelente! Para clínicas, sugiro: WhatsApp para agendamentos, Google Calendar para consultas, CRM para pacientes e Voice AI para atendimento telefônico. Quantos pacientes vocês atendem por dia?";
+      recommendations = [1, 3, 7, 10]; // WhatsApp, Calendar, CRM, Voice AI
+    } else if (
+      lowerMessage.includes("loja") ||
+      lowerMessage.includes("ecommerce") ||
+      lowerMessage.includes("vendas")
+    ) {
+      aiResponse =
+        "🛍️ Ótimo! Para lojas, indico: WhatsApp Business, Meta Business para redes sociais, IA Analytics para vendas e CRM para clientes. Você vende online ou físico?";
+      recommendations = [1, 2, 5, 7]; // WhatsApp, Meta, IA Analytics, CRM
+    } else if (
+      lowerMessage.includes("salão") ||
+      lowerMessage.includes("beleza") ||
+      lowerMessage.includes("estética")
+    ) {
+      aiResponse =
+        "💇‍♀️ Perfeito para salões! Recomendo: WhatsApp para agendamentos, Google Calendar para horários, Meta Business para mostrar trabalhos e E-mail Marketing para promoções. Quantos profissionais trabalham aí?";
+      recommendations = [1, 3, 2, 6]; // WhatsApp, Calendar, Meta, Email
+    } else if (
+      lowerMessage.includes("número") ||
+      lowerMessage.includes("mesa") ||
+      lowerMessage.includes("paciente") ||
+      lowerMessage.includes("profissional")
+    ) {
+      aiResponse =
+        "📊 Com base no volume que você me disse, vejo que seu negócio tem potencial para automação completa! Vou adicionar também o Chatbot IA para atender 24/7 e N8N para automatizar processos. Isso vai economizar muito tempo da sua equipe!";
+      recommendations = [...aiRecommendations, 4, 8]; // Adiciona N8N e Chatbot
+    } else {
+      aiResponse =
+        "🤔 Interessante! Me fale mais detalhes sobre seu negócio. Que tipo de empresa é? Quantos clientes vocês atendem por dia? Assim posso fazer uma recomendação mais precisa!";
+    }
+
+    setAiMessages((prev) => [
+      ...prev,
+      { type: "user", text: userMessage },
+      { type: "ai", text: aiResponse },
+    ]);
+
+    if (recommendations.length > 0) {
+      setAiRecommendations(recommendations);
+      setSelectedModules(recommendations);
+    }
+
+    setIsAiTyping(false);
+  };
+
+  const handleAiSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userInput.trim()) {
+      processAiMessage(userInput);
+      setUserInput("");
+    }
+  };
+
   const businessTypes = [
     "Clínicas e Consultórios",
     "Salões de Beleza",
