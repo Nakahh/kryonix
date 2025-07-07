@@ -286,7 +286,7 @@ const Landing = () => {
         "Sincronização com Google Calendar",
         "Agendamento automático de visitas",
         "Lembretes por email e WhatsApp",
-        "Gestão de disponibilidade",
+        "Gest��o de disponibilidade",
         "Relatórios de agendamentos",
         "N8N Integration",
       ],
@@ -739,62 +739,175 @@ const Landing = () => {
       {/* Pricing */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-4">
-            Escolha Seu Plano
-          </h2>
-          <p className="text-xl text-gray-600 text-center mb-12">
-            Comece grátis e escale conforme seu negócio cresce
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto px-4">
-            {plans.map((plan, index) => (
-              <Card
-                key={index}
-                className={`relative ${plan.popular ? "border-blue-500 shadow-lg scale-105" : ""} ${plan.isFree ? "border-green-500 shadow-lg" : ""}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                      Mais Popular
-                    </span>
-                  </div>
-                )}
-                {plan.isFree && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-green-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                      Teste Grátis
-                    </span>
-                  </div>
-                )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <div className="py-4">
-                    <span className="text-3xl font-bold text-gray-900">
-                      {plan.price}
-                    </span>
-                    <span className="text-gray-600">{plan.period}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Monte Seu Plano Personalizado
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Escolha um plano base e adicione apenas os módulos que seu negócio
+              precisa. Pague apenas pelo que usar.
+            </p>
+          </div>
+
+          {/* Base Plans */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">
+              1. Escolha seu Plano Base
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {basePlans.map((plan, index) => (
+                <Card
+                  key={index}
+                  className={`relative ${plan.popular ? "border-blue-500 shadow-lg scale-105" : ""} ${plan.isFree ? "border-green-500 shadow-lg" : ""}`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        Mais Popular
+                      </span>
+                    </div>
+                  )}
+                  {plan.isFree && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-green-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        Teste Grátis
+                      </span>
+                    </div>
+                  )}
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-xl">{plan.name}</CardTitle>
+                    <div className="py-4">
+                      <span className="text-3xl font-bold text-gray-900">
+                        R$ {plan.price}
+                      </span>
+                      <span className="text-gray-600">{plan.period}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center">
+                          <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                          <span className="text-sm text-gray-700">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className="w-full"
+                      variant={
+                        plan.popular || plan.isFree ? "default" : "outline"
+                      }
+                      onClick={() => navigate("/register")}
+                    >
+                      {plan.isFree ? "Começar Teste Grátis" : "Escolher Base"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Modules */}
+          <div>
+            <h3 className="text-2xl font-bold text-center text-gray-900 mb-4">
+              2. Adicione os Módulos que Precisa
+            </h3>
+            <p className="text-center text-gray-600 mb-12">
+              Cada módulo pode ser adicionado a qualquer plano base. Ative e
+              desative conforme sua necessidade.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+              {modules.map((module, index) => (
+                <Card
+                  key={index}
+                  className="h-full hover:shadow-lg transition-all duration-300 relative group"
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        {module.icon}
+                        <div>
+                          <CardTitle className="text-lg">
+                            {module.name}
+                          </CardTitle>
+                          <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                            {module.category}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-gray-900">
+                          +R$ {module.price}
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {module.period}
+                        </div>
+                      </div>
+                    </div>
+                    <CardDescription className="text-sm">
+                      {module.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 mb-4">
+                      {module.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center">
+                          <Check className="h-3 w-3 text-green-600 mr-2 flex-shrink-0" />
+                          <span className="text-xs text-gray-700">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className="w-full"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      Adicionar Módulo
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Pricing Calculator */}
+          <div className="mt-16 max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
+              <CardContent className="p-8 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  🧮 Calculadora de Preços
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Exemplo: Plano Professional (R$ 97) + WhatsApp Premium (R$ 50)
+                  + Google Calendar Pro (R$ 30) = <strong>R$ 177/mês</strong>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
-                    className="w-full"
-                    variant={
-                      plan.popular || plan.isFree ? "default" : "outline"
-                    }
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600"
                     onClick={() => navigate("/register")}
                   >
-                    {plan.isFree ? "Começar Teste Grátis" : "Escolher Plano"}
+                    Começar Personalização
                   </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() =>
+                      window.open("https://wa.me/5517981805327", "_blank")
+                    }
+                  >
+                    <MessageSquare className="mr-2 h-5 w-5" />
+                    Falar com Consultor
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
