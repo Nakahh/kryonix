@@ -1,149 +1,97 @@
 version: "3.8"
 
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:15
-    restart: unless-stopped
+    container_name: kryonix_postgres
     environment:
-      POSTGRES_DB: autobiz_saas
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: autobiz_secret_2024
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: ${POSTGRES_USER:-kryonix_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-SuaSenhaSegura123}
+      POSTGRES_DB: ${POSTGRES_DB:-kryonix}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - autobiz_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kryonix_user}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # N8N Automation Platform
   n8n:
     image: n8nio/n8n:latest
-    restart: unless-stopped
+    container_name: kryonix_n8n
+    ports:
+      - "5678:5678"
     environment:
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin_n8n_2024
-      - N8N_HOST=0.0.0.0
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_BASIC_AUTH_PASSWORD=admin123
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=autobiz_saas
-      - DB_POSTGRESDB_USER=postgres
-      - DB_POSTGRESDB_PASSWORD=autobiz_secret_2024
-      - EXECUTIONS_PROCESS=main
-    ports:
-      - "5678:5678"
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-kryonix_user}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-SuaSenhaSegura123}
+      - N8N_ENCRYPTION_KEY=kryonix-encryption-key-2024
+      - WEBHOOK_URL=http://localhost:5678
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_METRICS=true
     volumes:
       - n8n_data:/home/node/.n8n
-      - ./n8n-workflows:/home/node/workflows
+      - ./n8n-workflows:/home/node/.n8n/workflows
     depends_on:
-      - postgres
-    networks:
-      - autobiz_network
-
-  # Redis for caching and sessions
-  redis:
-    image: redis:7-alpine
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - autobiz_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:5678/healthz || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Backend API (Evolution API)
-  api:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - DATABASE_URL=postgresql://postgres:autobiz_secret_2024@postgres:5432/autobiz_saas
-      - JWT_SECRET=ultra_secret_jwt_autobiz_2024
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - RESEND_API_KEY=${RESEND_API_KEY}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - N8N_WEBHOOK_URL=http://n8n:5678/webhook
-      - REDIS_URL=redis://redis:6379
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    depends_on:
-      - postgres
-      - redis
-      - n8n
-    networks:
-      - autobiz_network
-
-  # Frontend React App
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      - VITE_API_URL=http://localhost:3001
-      - VITE_N8N_URL=http://localhost:5678
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    depends_on:
-      - api
-    networks:
-      - autobiz_network
-
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
-    depends_on:
-      - frontend
-      - api
-      - n8n
-    networks:
-      - autobiz_network
-
-  # PgAdmin for database management
   pgadmin:
     image: dpage/pgadmin4
-    restart: unless-stopped
+    container_name: kryonix_pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@autobiz.com
-      PGADMIN_DEFAULT_PASSWORD: admin_pg_2024
+      PGADMIN_DEFAULT_EMAIL: admin@kryonix.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
-      - postgres
-    networks:
-      - autobiz_network
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: kryonix_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123}
 
 volumes:
   postgres_data:
+    driver: local
   n8n_data:
+    driver: local
+  pgadmin_data:
+    driver: local
   redis_data:
+    driver: local
 
 networks:
-  autobiz_network:
-    driver: bridge
+  default:
+    name: kryonix_network
