@@ -1,0 +1,350 @@
+{
+  "name": "KRYONIX - CRM Lead Management",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "lead-webhook",
+      "name": "Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "lead-kryonix"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar dados do lead\nconst data = $input.first().json;\n\n// Extrair informações\nconst name = data.name || 'Lead Sem Nome';\nconst email = data.email || '';\nconst phone = data.phone || '';\nconst message = data.message || '';\nconst source = data.source || 'website';\nconst utm_source = data.utm_source || '';\nconst utm_campaign = data.utm_campaign || '';\n\n// Calcular score do lead\nconst calculateLeadScore = () => {\n  let score = 0;\n  \n  // Informações de contato\n  if (email) score += 20;\n  if (phone) score += 20;\n  if (name !== 'Lead Sem Nome') score += 10;\n  \n  // Qualidade da mensagem\n  if (message.length > 50) score += 15;\n  if (/(orçamento|preço|valor|interessado|contratar)/.test(message.toLowerCase())) score += 25;\n  \n  // Fonte do lead\n  if (source === 'whatsapp') score += 10;\n  if (source === 'google_ads') score += 15;\n  if (source === 'facebook_ads') score += 10;\n  \n  return Math.min(score, 100);\n};\n\n// Classificar urgência\nconst classifyUrgency = (msg) => {\n  const urgent_keywords = /(urgente|rápido|hoje|agora|imediato)/i;\n  const medium_keywords = /(semana|próxima|breve|interessado)/i;\n  \n  if (urgent_keywords.test(msg)) return 'high';\n  if (medium_keywords.test(msg)) return 'medium';\n  return 'low';\n};\n\nconst leadScore = calculateLeadScore();\nconst urgency = classifyUrgency(message);\nconst leadId = `LEAD_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;\n\nreturn {\n  leadId,\n  name,\n  email,\n  phone,\n  message,\n  source,\n  utm_source,\n  utm_campaign,\n  leadScore,\n  urgency,\n  status: 'new',\n  createdAt: new Date().toISOString(),\n  assignedTo: null\n};"
+      },
+      "id": "process-lead-data",
+      "name": "Process Lead Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "leads",
+        "columns": "lead_id, name, email, phone, message, source, utm_source, utm_campaign, lead_score, urgency, status, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-lead-to-db",
+      "name": "Save Lead to DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [600, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $json.leadScore }}",
+              "rightValue": "70",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "high-quality-lead",
+      "name": "High Quality Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, email, whatsapp, expertise FROM team_members WHERE status = 'active' AND role = 'sales' ORDER BY current_leads ASC LIMIT 1",
+        "additionalFields": {}
+      },
+      "id": "assign-sales-rep",
+      "name": "Assign Sales Rep",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1000, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "leads@kryonix.com",
+        "to": "{{ $json[0].email }}",
+        "subject": "🚨 LEAD QUENTE - {{ $('Process Lead Data').first().json.name }}",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Novo Lead de Alta Qualidade</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">\n    <div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">\n        <h2 style=\"color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;\">🚨 LEAD QUENTE CHEGOU!</h2>\n        \n        <div style=\"background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n            <h3 style=\"color: #059669; margin-top: 0;\">Informações do Lead:</h3>\n            <p><strong>Nome:</strong> {{ $('Process Lead Data').first().json.name }}</p>\n            <p><strong>Email:</strong> {{ $('Process Lead Data').first().json.email }}</p>\n            <p><strong>Telefone:</strong> {{ $('Process Lead Data').first().json.phone }}</p>\n            <p><strong>Fonte:</strong> {{ $('Process Lead Data').first().json.source }}</p>\n            <p><strong>Score:</strong> <span style=\"background: #dc2626; color: white; padding: 2px 8px; border-radius: 4px;\">{{ $('Process Lead Data').first().json.leadScore }}/100</span></p>\n            <p><strong>Urgência:</strong> <span style=\"background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px;\">{{ $('Process Lead Data').first().json.urgency }}</span></p>\n        </div>\n        \n        <div style=\"background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;\">\n            <h4 style=\"margin-top: 0; color: #92400e;\">Mensagem do Lead:</h4>\n            <p style=\"font-style: italic;\">\"{{ $('Process Lead Data').first().json.message }}\"</p>\n        </div>\n        \n        <div style=\"text-align: center; margin: 30px 0;\">\n            <a href=\"https://wa.me/{{ $('Process Lead Data').first().json.phone }}\" \n               style=\"background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;\">\n                📱 CONTATAR AGORA VIA WHATSAPP\n            </a>\n        </div>\n        \n        <div style=\"background: #dbeafe; padding: 15px; border-radius: 8px;\">\n            <p style=\"margin: 0;\"><strong>⏰ AÇÃO IMEDIATA REQUERIDA:</strong></p>\n            <p style=\"margin: 5px 0 0 0;\">Leads com score alto devem ser contatados em até 5 minutos!</p>\n        </div>\n        \n        <hr style=\"margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;\">\n        <p style=\"text-align: center; color: #6b7280; font-size: 14px;\">\n            KRYONIX - Sistema de Automação Empresarial<br>\n            Este lead foi atribuído a: {{ $json[0].name }}\n        </p>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "notify-sales-team",
+      "name": "Notify Sales Team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1200, 200],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.evolution-api.com/message/sendText",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "{{ $credentials.evolutionApi.apiKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "{{ $('Assign Sales Rep').first().json[0].whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "🚨 *LEAD QUENTE ATRIBUÍDO*\\n\\n👤 *Nome:* {{ $('Process Lead Data').first().json.name }}\\n📱 *Telefone:* {{ $('Process Lead Data').first().json.phone }}\\n📧 *Email:* {{ $('Process Lead Data').first().json.email }}\\n📊 *Score:* {{ $('Process Lead Data').first().json.leadScore }}/100\\n⚡ *Urgência:* {{ $('Process Lead Data').first().json.urgency }}\\n\\n💬 *Mensagem:*\\n\\\"{{ $('Process Lead Data').first().json.message }}\\\"\\n\\n⏰ *AÇÃO IMEDIATA REQUERIDA!*\\nContate em até 5 minutos para maximizar conversão.\\n\\n[KRYONIX CRM System]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "whatsapp-sales-notification",
+      "name": "WhatsApp Sales Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1400, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "evolution-api-kryonix",
+          "name": "Evolution API KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "noreply@kryonix.com",
+        "to": "{{ $('Process Lead Data').first().json.email }}",
+        "subject": "Obrigado pelo seu interesse na KRYONIX! 🚀",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Bem-vindo à KRYONIX</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px;\">\n    <div style=\"max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);\">\n        \n        <!-- Header -->\n        <div style=\"background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 30px; text-align: center;\">\n            <h1 style=\"color: white; margin: 0; font-size: 28px;\">🚀 KRYONIX</h1>\n            <p style=\"color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;\">Automação Empresarial com IA</p>\n        </div>\n        \n        <!-- Conteúdo -->\n        <div style=\"padding: 40px 30px;\">\n            <h2 style=\"color: #2563eb; margin-top: 0;\">Olá {{ $('Process Lead Data').first().json.name }}! 👋</h2>\n            \n            <p style=\"font-size: 16px; margin-bottom: 20px;\">Obrigado por demonstrar interesse em nossos serviços de automação empresarial!</p>\n            \n            <div style=\"background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #2563eb; margin: 20px 0;\">\n                <h3 style=\"color: #1e40af; margin-top: 0;\">🤖 O que a KRYONIX pode fazer pelo seu negócio:</h3>\n                <ul style=\"margin: 0; padding-left: 20px;\">\n                    <li>✅ Automatizar atendimento no WhatsApp 24/7</li>\n                    <li>✅ Integrar Instagram e Facebook automaticamente</li>\n                    <li>✅ Agendar consultas e reuniões sem intervenção</li>\n                    <li>✅ Analisar dados com Inteligência Artificial</li>\n                    <li>✅ Gerenciar leads e clientes automaticamente</li>\n                    <li>✅ Enviar campanhas de email personalizadas</li>\n                </ul>\n            </div>\n            \n            <div style=\"background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n                <h3 style=\"color: #92400e; margin-top: 0;\">⚡ Nossa equipe entrará em contato!</h3>\n                <p style=\"margin: 0;\">Recebemos sua mensagem e um de nossos especialistas entrará em contato em breve para apresentar a solução ideal para seu negócio.</p>\n            </div>\n            \n            <div style=\"text-align: center; margin: 30px 0;\">\n                <a href=\"https://wa.me/5517981805327\" \n                   style=\"background: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;\">\n                    💬 FALAR AGORA NO WHATSAPP\n                </a>\n            </div>\n            \n            <div style=\"background: #dbeafe; padding: 20px; border-radius: 8px;\">\n                <h4 style=\"color: #1e40af; margin-top: 0;\">📊 Resultados que nossos clientes alcançam:</h4>\n                <div style=\"display: flex; justify-content: space-between; text-align: center; margin-top: 15px;\">\n                    <div style=\"flex: 1;\">\n                        <div style=\"font-size: 24px; font-weight: bold; color: #059669;\">340%</div>\n                        <div style=\"font-size: 12px; color: #6b7280;\">Aumento em vendas</div>\n                    </div>\n                    <div style=\"flex: 1;\">\n                        <div style=\"font-size: 24px; font-weight: bold; color: #7c2d12;\">85%</div>\n                        <div style=\"font-size: 12px; color: #6b7280;\">Redução de custos</div>\n                    </div>\n                    <div style=\"flex: 1;\">\n                        <div style=\"font-size: 24px; font-weight: bold; color: #7c3aed;\">24/7</div>\n                        <div style=\"font-size: 12px; color: #6b7280;\">Atendimento automático</div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        \n        <!-- Footer -->\n        <div style=\"background: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;\">\n            <p style=\"margin: 0; color: #6b7280; font-size: 14px;\">KRYONIX - Transformando negócios com tecnologia</p>\n            <p style=\"margin: 5px 0 0 0; color: #6b7280; font-size: 12px;\">CEO: Vitor Jayme Fernandes Ferreira | WhatsApp: (17) 9 8180-5327</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "auto-reply-lead",
+      "name": "Auto Reply Lead",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1000, 400],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Agendar follow-up baseado na urgência\nconst leadData = $('Process Lead Data').first().json;\nconst now = new Date();\nlet followUpDate;\n\nswitch (leadData.urgency) {\n  case 'high':\n    followUpDate = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutos\n    break;\n  case 'medium':\n    followUpDate = new Date(now.getTime() + 60 * 60 * 1000); // 1 hora\n    break;\n  default:\n    followUpDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 horas\n}\n\nreturn {\n  leadId: leadData.leadId,\n  followUpDate: followUpDate.toISOString(),\n  urgency: leadData.urgency,\n  reminderText: `Follow-up do lead ${leadData.name} - Score: ${leadData.leadScore}`\n};"
+      },
+      "id": "schedule-followup",
+      "name": "Schedule Follow-up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "lead_followups",
+        "columns": "lead_id, follow_up_date, urgency, reminder_text, status, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-followup",
+      "name": "Save Follow-up",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1400, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Lead processado com sucesso\",\n  \"leadId\": \"{{ $('Process Lead Data').first().json.leadId }}\",\n  \"leadScore\": {{ $('Process Lead Data').first().json.leadScore }},\n  \"urgency\": \"{{ $('Process Lead Data').first().json.urgency }}\",\n  \"followUpScheduled\": \"{{ $('Schedule Follow-up').first().json.followUpDate }}\"\n}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1600, 300]
+    }
+  ],
+  "connections": {
+    "Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to DB": {
+      "main": [
+        [
+          {
+            "node": "High Quality Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Quality Lead?": {
+      "main": [
+        [
+          {
+            "node": "Assign Sales Rep",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Auto Reply Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Sales Rep": {
+      "main": [
+        [
+          {
+            "node": "Notify Sales Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Sales Team": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sales Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Sales Notification": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto Reply Lead": {
+      "main": [
+        [
+          {
+            "node": "Schedule Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Save Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-20T10:00:00.000Z",
+  "updatedAt": "2024-01-20T10:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["kryonix", "crm", "leads"],
+  "triggerCount": 0,
+  "versionId": "1"
+}
