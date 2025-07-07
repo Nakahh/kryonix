@@ -210,39 +210,99 @@ const Dashboard = () => {
   ];
 
   const connectIntegration = (moduleId: string) => {
-    // Simulate connection process
-    console.log(`Connecting ${moduleId}...`);
+    if (moduleId === "settings") {
+      navigate("/settings");
+      return;
+    }
 
-    if (moduleId === "whatsapp") {
-      // Show QR code modal in real implementation
-      setUser((prev) => ({ ...prev, whatsappConnected: true }));
+    console.log(`Conectando ${moduleId}...`);
+
+    // Simulate connection process
+    setUser((prev) => ({
+      ...prev,
+      [`${moduleId}Connected`]: true,
+    }));
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "online":
+      case "connected":
+      case "healthy":
+        return <Wifi className="h-4 w-4 text-green-600" />;
+      case "offline":
+      case "disconnected":
+      case "error":
+        return <WifiOff className="h-4 w-4 text-red-600" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-yellow-600" />;
     }
   };
 
+  // Loading Screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-4">KRYONIX</h1>
+          <p className="text-blue-200 text-lg">Carregando seu dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/80 backdrop-blur-sm shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Olá, {user.name}!
-              </h1>
-              <Badge variant={user.plan === "PRO" ? "default" : "secondary"}>
-                Plano {user.plan}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Olá, {user.name}!
+                  </h1>
+                  <p className="text-sm text-gray-600">{user.company}</p>
+                </div>
+              </div>
+              <Badge
+                variant={user.plan === "PREMIUM" ? "default" : "secondary"}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+              >
+                {user.plan}
               </Badge>
             </div>
             <div className="flex items-center space-x-4">
               {user.trialDaysLeft > 0 && (
-                <div className="flex items-center space-x-2 text-orange-600">
+                <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
                   <Clock className="h-4 w-4" />
                   <span className="text-sm font-medium">
-                    {user.trialDaysLeft} dias restantes do trial
+                    {user.trialDaysLeft} dias restantes
                   </span>
                 </div>
               )}
-              <Button variant="outline" size="sm">
+              <div className="flex items-center space-x-2">
+                {Object.entries(systemStatus).map(([key, status]) => (
+                  <div key={key} className="flex items-center space-x-1">
+                    {getStatusIcon(status)}
+                    <span className="text-xs text-gray-600 capitalize">
+                      {key}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/settings")}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Configurações
               </Button>
