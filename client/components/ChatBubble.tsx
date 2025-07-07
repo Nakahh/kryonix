@@ -162,10 +162,10 @@ const ChatBubble = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       <Card
-        className={`w-80 shadow-xl transition-all duration-300 ${
-          isMinimized ? "h-16" : "h-96"
+        className={`w-80 max-w-[calc(100vw-2rem)] shadow-xl transition-all duration-300 ${
+          isMinimized ? "h-16" : "h-96 max-h-[80vh]"
         }`}
       >
         <CardHeader className="p-4 pb-2">
