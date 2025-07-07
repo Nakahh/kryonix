@@ -1,0 +1,159 @@
+{
+  "name": "KRYONIX - IA Consultant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ia-consultant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-ia-consultant",
+      "name": "Webhook IA Consultant",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "ia-consultant-kryonix"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "messages": {
+          "messageType": "multipleMessages",
+          "multipleMessages": [
+            {
+              "role": "system",
+              "message": "Você é uma consultora especializada em automação empresarial da KRYONIX. Sua função é analisar o negócio do cliente e recomendar os módulos ideais.\n\nMódulos disponíveis:\n1. WhatsApp Business Premium (R$ 105/mês) - Automação de leads e atendimento\n2. Meta Business Integration (R$ 168/mês) - Instagram + Facebook automático  \n3. Google Calendar Pro (R$ 63/mês) - Agendamentos automáticos\n4. N8N Automation Premium (R$ 126/mês) - Workflows empresariais\n5. IA Advanced Analytics (R$ 147/mês) - Análise preditiva\n6. E-mail Marketing Pro (R$ 84/mês) - Campanhas automatizadas\n7. CRM Inteligente (R$ 105/mês) - Gestão de clientes\n8. Chatbot IA Avançado (R$ 126/mês) - Atendimento 24/7\n9. Lead Generation Turbo (R$ 147/mês) - Geração de leads\n10. Voice AI Assistant (R$ 189/mês) - Atendimento telefônico\n\nAnalise o tipo de negócio e recomende 3-5 módulos específicos. Seja conversacional, faça perguntas para entender melhor o negócio."
+            },
+            {
+              "role": "user",
+              "message": "{{ $json.message }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 500
+        }
+      },
+      "id": "openai-analysis",
+      "name": "OpenAI Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [400, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-kryonix",
+          "name": "OpenAI KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Analisar resposta da IA e extrair recomendações\nconst aiResponse = $input.first().json.response;\nconst userMessage = $('Webhook IA Consultant').first().json.body.message;\n\n// Mapear módulos por palavras-chave\nconst moduleRecommendations = {\n  'restaurante|lanchonete|comida|bar|café': [1, 3, 6, 2], // WhatsApp, Calendar, Email, Meta\n  'clínica|médico|consultório|dentista|hospital': [1, 3, 7, 10], // WhatsApp, Calendar, CRM, Voice\n  'loja|ecommerce|vendas|varejo|produtos': [1, 2, 5, 7], // WhatsApp, Meta, Analytics, CRM\n  'salão|beleza|estética|barbearia|spa': [1, 3, 2, 6], // WhatsApp, Calendar, Meta, Email\n  'advocacia|contabilidade|consultoria|escritório': [1, 7, 4, 6], // WhatsApp, CRM, N8N, Email\n  'academia|fitness|personal|esporte': [1, 3, 6, 2], // WhatsApp, Calendar, Email, Meta\n  'escola|educação|curso|treinamento': [1, 3, 6, 8] // WhatsApp, Calendar, Email, Chatbot\n};\n\n// Detectar tipo de negócio\nlet detectedModules = [];\nconst lowerMessage = userMessage.toLowerCase();\n\nfor (const [keywords, modules] of Object.entries(moduleRecommendations)) {\n  const regex = new RegExp(keywords, 'i');\n  if (regex.test(lowerMessage)) {\n    detectedModules = modules;\n    break;\n  }\n}\n\n// Se não detectou por palavra-chave, usar análise de contexto\nif (detectedModules.length === 0) {\n  // Módulos básicos padrão\n  detectedModules = [1, 7, 4]; // WhatsApp, CRM, N8N\n}\n\n// Informações dos módulos\nconst modulesInfo = {\n  1: { name: 'WhatsApp Business Premium', price: 105, category: 'Comunicação' },\n  2: { name: 'Meta Business Integration', price: 168, category: 'Marketing' },\n  3: { name: 'Google Calendar Pro', price: 63, category: 'Produtividade' },\n  4: { name: 'N8N Automation Premium', price: 126, category: 'Automação' },\n  5: { name: 'IA Advanced Analytics', price: 147, category: 'Inteligência' },\n  6: { name: 'E-mail Marketing Pro', price: 84, category: 'Marketing' },\n  7: { name: 'CRM Inteligente', price: 105, category: 'Vendas' },\n  8: { name: 'Chatbot IA Avançado', price: 126, category: 'Atendimento' },\n  9: { name: 'Lead Generation Turbo', price: 147, category: 'Geração' },\n  10: { name: 'Voice AI Assistant', price: 189, category: 'Atendimento' }\n};\n\n// Montar resposta\nconst recommendedModules = detectedModules.map(id => ({\n  id,\n  ...modulesInfo[id]\n}));\n\nconst totalPrice = recommendedModules.reduce((sum, module) => sum + module.price, 0);\n\nreturn {\n  aiResponse,\n  recommendedModules,\n  totalPrice,\n  timestamp: new Date().toISOString(),\n  userMessage\n};"
+      },
+      "id": "analyze-recommendations",
+      "name": "Analyze Recommendations",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "consultant_sessions",
+        "columns": "user_ip, user_message, ai_response, recommended_modules, total_price, created_at",
+        "additionalFields": {}
+      },
+      "id": "save-to-database",
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [800, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      },
+      "parameters": {
+        "query": "INSERT INTO consultant_sessions (user_ip, user_message, ai_response, recommended_modules, total_price, created_at) VALUES ($1, $2, $3, $4, $5, $6)",
+        "values": [
+          "{{ $('Webhook IA Consultant').first().json.headers['x-forwarded-for'] || 'unknown' }}",
+          "{{ $json.userMessage }}",
+          "{{ $json.aiResponse }}",
+          "{{ JSON.stringify($json.recommendedModules) }}",
+          "{{ $json.totalPrice }}",
+          "{{ $json.timestamp }}"
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"response\": \"{{ $('Analyze Recommendations').first().json.aiResponse }}\",\n  \"recommendations\": {{ JSON.stringify($('Analyze Recommendations').first().json.recommendedModules) }},\n  \"totalPrice\": {{ $('Analyze Recommendations').first().json.totalPrice }},\n  \"timestamp\": \"{{ $('Analyze Recommendations').first().json.timestamp }}\"\n}",
+        "options": {}
+      },
+      "id": "respond-to-user",
+      "name": "Respond to User",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "Webhook IA Consultant": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Analysis": {
+      "main": [
+        [
+          {
+            "node": "Analyze Recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Recommendations": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Database": {
+      "main": [
+        [
+          {
+            "node": "Respond to User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-20T10:00:00.000Z",
+  "updatedAt": "2024-01-20T10:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["kryonix", "ia", "consultant"],
+  "triggerCount": 0,
+  "versionId": "1"
+}
