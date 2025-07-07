@@ -106,6 +106,7 @@ const Landing = () => {
     {
       name: "TESTE GRÁTIS",
       price: 0,
+      originalPrice: 0,
       period: "/7 dias",
       features: [
         "WhatsApp Business básico",
@@ -119,7 +120,8 @@ const Landing = () => {
     },
     {
       name: "STARTER",
-      price: 47,
+      price: 66,
+      originalPrice: 97,
       period: "/mês",
       features: [
         "WhatsApp Business completo",
@@ -130,10 +132,12 @@ const Landing = () => {
         "Suporte por e-mail",
       ],
       popular: false,
+      discount: "32% OFF",
     },
     {
       name: "PROFESSIONAL",
-      price: 97,
+      price: 136,
+      originalPrice: 197,
       period: "/mês",
       features: [
         "Tudo do Starter",
@@ -144,13 +148,16 @@ const Landing = () => {
         "Suporte técnico especializado",
       ],
       popular: true,
+      discount: "31% OFF",
     },
   ];
 
   const modules = [
     {
+      id: 1,
       name: "WhatsApp Business Premium",
-      price: 50,
+      price: 70,
+      originalPrice: 120,
       period: "/mês",
       description: "Automação completa de leads e distribuição inteligente",
       features: [
@@ -159,13 +166,19 @@ const Landing = () => {
         "Fallback após 15 minutos",
         "Histórico completo de conversas",
         "Notificações em tempo real",
+        "API Evolution integrada",
       ],
       icon: <MessageSquare className="h-6 w-6 text-green-600" />,
       category: "Comunicação",
+      discount: "42% OFF",
+      urgent: true,
+      value: "Economiza 8h/dia de trabalho manual",
     },
     {
+      id: 2,
       name: "Meta Business Integration",
-      price: 80,
+      price: 112,
+      originalPrice: 180,
       period: "/mês",
       description: "Instagram e Facebook automático para seu negócio",
       features: [
@@ -174,13 +187,18 @@ const Landing = () => {
         "Gestão de campanhas",
         "Auto-posting de conteúdo",
         "Analytics avançadas",
+        "Stories automáticos",
       ],
       icon: <BarChart3 className="h-6 w-6 text-blue-600" />,
       category: "Marketing",
+      discount: "38% OFF",
+      value: "Alcance 300% mais clientes",
     },
     {
+      id: 3,
       name: "Google Calendar Pro",
-      price: 30,
+      price: 42,
+      originalPrice: 80,
       period: "/mês",
       description: "Agendamento automático com sincronização total",
       features: [
@@ -189,13 +207,18 @@ const Landing = () => {
         "Lembretes por email e WhatsApp",
         "Gestão de disponibilidade",
         "Relatórios de agendamentos",
+        "Zoom/Meet integrado",
       ],
       icon: <Calendar className="h-6 w-6 text-purple-600" />,
       category: "Produtividade",
+      discount: "47% OFF",
+      value: "Zero agenda perdida",
     },
     {
+      id: 4,
       name: "N8N Automation Premium",
-      price: 60,
+      price: 84,
+      originalPrice: 150,
       period: "/mês",
       description: "Automação completa de processos empresariais",
       features: [
@@ -208,10 +231,14 @@ const Landing = () => {
       ],
       icon: <Zap className="h-6 w-6 text-orange-600" />,
       category: "Automação",
+      discount: "44% OFF",
+      value: "Automatiza 90% dos processos",
     },
     {
+      id: 5,
       name: "IA Advanced Analytics",
-      price: 70,
+      price: 98,
+      originalPrice: 160,
       period: "/mês",
       description: "Inteligência artificial para análise de dados",
       features: [
@@ -220,13 +247,19 @@ const Landing = () => {
         "Relatórios com IA",
         "Dashboards personalizados",
         "Alertas inteligentes",
+        "Machine Learning personalizado",
       ],
       icon: <Cpu className="h-6 w-6 text-red-600" />,
       category: "Inteligência",
+      discount: "39% OFF",
+      urgent: true,
+      value: "Aumenta vendas em 45%",
     },
     {
+      id: 6,
       name: "E-mail Marketing Pro",
-      price: 40,
+      price: 56,
+      originalPrice: 90,
       period: "/mês",
       description: "Campanhas de email profissionais automatizadas",
       features: [
@@ -235,11 +268,60 @@ const Landing = () => {
         "Segmentação avançada",
         "A/B Testing",
         "Relatórios detalhados",
+        "SMS Marketing incluído",
       ],
       icon: <Mail className="h-6 w-6 text-indigo-600" />,
       category: "Marketing",
+      discount: "38% OFF",
+      value: "ROI 400% garantido",
+    },
+    {
+      id: 7,
+      name: "CRM Inteligente",
+      price: 70,
+      originalPrice: 120,
+      period: "/mês",
+      description: "Gestão completa de clientes com IA",
+      features: [
+        "Funil de vendas automatizado",
+        "Scoring de leads com IA",
+        "Pipeline visual avançado",
+        "Relatórios de performance",
+        "Integração com todas as ferramentas",
+        "App mobile incluído",
+      ],
+      icon: <Users className="h-6 w-6 text-emerald-600" />,
+      category: "Vendas",
+      discount: "42% OFF",
+      value: "Converte 60% mais leads",
+    },
+    {
+      id: 8,
+      name: "Chatbot IA Avançado",
+      price: 84,
+      originalPrice: 140,
+      period: "/mês",
+      description: "Atendimento 24/7 com inteligência artificial",
+      features: [
+        "IA treinada para seu negócio",
+        "Atendimento 24/7 automático",
+        "Integração com WhatsApp/Site",
+        "Aprendizado contínuo",
+        "Transferência para humanos",
+        "Analytics de conversas",
+      ],
+      icon: <Shield className="h-6 w-6 text-cyan-600" />,
+      category: "Atendimento",
+      discount: "40% OFF",
+      urgent: true,
+      value: "Atende 1000+ clientes simultâneos",
     },
   ];
+
+  // Estado para módulos selecionados
+  const [selectedModules, setSelectedModules] = useState<number[]>([]);
+  const [selectedBasePlan, setSelectedBasePlan] = useState(1); // Professional por padrão
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const businessTypes = [
     "Clínicas e Consultórios",
@@ -371,7 +453,7 @@ const Landing = () => {
             </span>
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
-            Especialistas em React, Node.js, IA e automa��ão. Criamos soluções
+            Especialistas em React, Node.js, IA e automação. Criamos soluções
             digitais que transformam negócios e melhoram a vida das pessoas.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
