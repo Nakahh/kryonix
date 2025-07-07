@@ -262,7 +262,7 @@ const Landing = () => {
       category: "Automação",
       discount: "68% OFF",
       urgent: true,
-      value: "���� Automatiza 95% dos processos manuais",
+      value: "💎 Automatiza 95% dos processos manuais",
       testimonial: "Economizamos 40h/semana - Ana Costa, Diretora",
     },
     {
@@ -373,7 +373,6 @@ const Landing = () => {
       urgent: true,
       value: "🎯 500+ leads qualificados/mês",
       testimonial: "1000 leads qualificados no primeiro mês - Diego Santos",
-      limited: "Exclusivo para 25 empresas",
     },
     {
       id: 10,
