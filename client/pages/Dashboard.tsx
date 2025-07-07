@@ -40,42 +40,79 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
   const [user, setUser] = useState({
-    name: "João Silva",
-    plan: "PRO",
+    name: "Vitor Jayme",
+    company: "Minha Empresa",
+    plan: "PREMIUM",
     trialDaysLeft: 5,
-    whatsappConnected: false,
+    whatsappConnected: true,
     emailConnected: false,
-    calendarConnected: false,
+    calendarConnected: true,
+    aiConfigured: false,
   });
 
   const [metrics, setMetrics] = useState({
-    messagesThisMonth: 245,
-    leadsGenerated: 32,
-    appointmentsScheduled: 18,
-    revenue: 2850,
+    messagesThisMonth: 1247,
+    leadsGenerated: 89,
+    appointmentsScheduled: 45,
+    revenue: 8950,
+    conversionRate: 18.5,
+    averageResponseTime: "2.3s",
+  });
+
+  const [systemStatus, setSystemStatus] = useState({
+    api: "online",
+    n8n: "online",
+    whatsapp: "connected",
+    openai: "connected",
+    database: "healthy",
   });
 
   const [activities, setActivities] = useState([
     {
       id: 1,
       type: "whatsapp",
-      description: "Nova mensagem de cliente interessado",
+      description: "Nova mensagem: 'Gostaria de agendar uma consulta'",
       time: "2 min atrás",
+      status: "success",
     },
     {
       id: 2,
-      type: "calendar",
-      description: "Agendamento marcado para amanhã às 14h",
-      time: "15 min atrás",
+      type: "ai",
+      description: "IA respondeu automaticamente sobre horários disponíveis",
+      time: "2 min atrás",
+      status: "success",
     },
     {
       id: 3,
+      type: "calendar",
+      description: "Agendamento criado para João Silva - 15/01 14h",
+      time: "5 min atrás",
+      status: "success",
+    },
+    {
+      id: 4,
       type: "payment",
-      description: "Pagamento de R$ 150 recebido via PIX",
+      description: "Pagamento de R$ 250 recebido via PIX",
+      time: "23 min atrás",
+      status: "success",
+    },
+    {
+      id: 5,
+      type: "email",
+      description: "E-mail de confirmação enviado para cliente",
       time: "1 hora atrás",
+      status: "success",
     },
   ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const integrationModules = [
     {
