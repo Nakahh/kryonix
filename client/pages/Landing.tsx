@@ -665,11 +665,11 @@ const Landing = () => {
           <p className="text-xl text-gray-600 text-center mb-12">
             Comece grátis e escale conforme seu negócio cresce
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto px-4">
             {plans.map((plan, index) => (
               <Card
                 key={index}
-                className={`relative ${plan.popular ? "border-blue-500 shadow-lg scale-105" : ""}`}
+                className={`relative ${plan.popular ? "border-blue-500 shadow-lg scale-105" : ""} ${plan.isFree ? "border-green-500 shadow-lg" : ""}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -678,10 +678,17 @@ const Landing = () => {
                     </span>
                   </div>
                 )}
+                {plan.isFree && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-green-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                      Teste Grátis
+                    </span>
+                  </div>
+                )}
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
                   <div className="py-4">
-                    <span className="text-4xl font-bold text-gray-900">
+                    <span className="text-3xl font-bold text-gray-900">
                       {plan.price}
                     </span>
                     <span className="text-gray-600">{plan.period}</span>
@@ -691,23 +698,117 @@ const Landing = () => {
                   <ul className="space-y-3 mb-6">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center">
-                        <Check className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
+                        <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <Button
                     className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
+                    variant={
+                      plan.popular || plan.isFree ? "default" : "outline"
+                    }
                     onClick={() => navigate("/register")}
                   >
-                    {plan.name === "GRATUITO"
-                      ? "Começar Grátis"
-                      : "Escolher Plano"}
+                    {plan.isFree ? "Começar Teste Grátis" : "Escolher Plano"}
                   </Button>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Services */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Serviços Premium
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Integre seu negócio com as melhores ferramentas do mercado. Ative
+              apenas os serviços que você precisa.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {premiumServices.map((service, index) => (
+              <Card
+                key={index}
+                className="h-full hover:shadow-lg transition-all duration-300"
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      {service.icon}
+                      <div>
+                        <CardTitle className="text-xl">
+                          {service.name}
+                        </CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className="text-sm px-2 py-1 bg-red-100 text-red-800 rounded-full font-medium">
+                            {service.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-gray-900">
+                        {service.price}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {service.period}
+                      </div>
+                    </div>
+                  </div>
+                  <CardDescription className="text-base">
+                    {service.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      Recursos:
+                    </h4>
+                    <ul className="space-y-2">
+                      {service.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center">
+                          <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                          <span className="text-sm text-gray-700">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-3">
+                    <Button
+                      className="w-full"
+                      variant="outline"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      Ativar Serviço
+                    </Button>
+                    <p className="text-xs text-gray-500 text-center">
+                      Controla disponibilidade global
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-lg px-8"
+              onClick={() => navigate("/dashboard")}
+            >
+              <Settings className="mr-2 h-5 w-5" />
+              Configurar N8N e Serviços
+            </Button>
+            <p className="text-sm text-gray-600 mt-3">
+              Gerencie todos os seus serviços premium em um só lugar
+            </p>
           </div>
         </div>
       </section>
