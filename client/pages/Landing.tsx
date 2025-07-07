@@ -220,7 +220,6 @@ const Landing = () => {
       discount: "62% OFF",
       value: "🚀 Alcance 500% mais clientes",
       testimonial: "R$ 50K faturamento/mês extra - Maria Santos",
-      limited: "Últimas 23 licenças disponíveis",
     },
     {
       id: 3,
