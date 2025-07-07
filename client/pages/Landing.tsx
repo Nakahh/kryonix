@@ -262,7 +262,7 @@ const Landing = () => {
       category: "Automação",
       discount: "68% OFF",
       urgent: true,
-      value: "💎 Automatiza 95% dos processos manuais",
+      value: "��� Automatiza 95% dos processos manuais",
       testimonial: "Economizamos 40h/semana - Ana Costa, Diretora",
     },
     {
@@ -328,7 +328,6 @@ const Landing = () => {
       discount: "70% OFF",
       value: "🔥 Converte 80% mais leads em clientes",
       testimonial: "Triplicamos as vendas - Paulo Silva, Gerente",
-      limited: "Apenas 31 licenças disponíveis",
     },
     {
       id: 8,
