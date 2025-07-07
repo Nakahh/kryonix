@@ -1,0 +1,520 @@
+{
+  "name": "KRYONIX - Email Marketing Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "email-campaign-scheduler",
+      "name": "Email Campaign Scheduler",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM email_campaigns WHERE status = 'scheduled' AND send_date <= NOW()",
+        "additionalFields": {}
+      },
+      "id": "get-scheduled-campaigns",
+      "name": "Get Scheduled Campaigns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [400, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $json.length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-campaigns",
+      "name": "Has Campaigns?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar cada campanha individualmente\nconst campaigns = $input.all();\nconst processedCampaigns = [];\n\nfor (const campaignData of campaigns) {\n  const campaign = campaignData.json;\n  \n  // Segmentar audiência baseado nos critérios\n  let audienceQuery = 'SELECT DISTINCT email, name, phone, user_data FROM users WHERE status = \\'active\\'';\n  let queryParams = [];\n  \n  // Filtros de segmentação\n  if (campaign.target_segment) {\n    switch (campaign.target_segment) {\n      case 'new_users':\n        audienceQuery += ' AND created_at >= $1';\n        queryParams.push(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());\n        break;\n      case 'active_users':\n        audienceQuery += ' AND last_login >= $1';\n        queryParams.push(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());\n        break;\n      case 'premium_users':\n        audienceQuery += ' AND plan IN ($1, $2)';\n        queryParams.push('PROFESSIONAL', 'ENTERPRISE');\n        break;\n      case 'trial_users':\n        audienceQuery += ' AND plan = $1';\n        queryParams.push('TRIAL');\n        break;\n    }\n  }\n  \n  // Personalizar conteúdo baseado na campanha\n  const personalizeContent = (template, userData) => {\n    return template\n      .replace(/{{name}}/g, userData.name || 'Cliente')\n      .replace(/{{email}}/g, userData.email)\n      .replace(/{{phone}}/g, userData.phone || '')\n      .replace(/{{company}}/g, userData.company || 'sua empresa');\n  };\n  \n  processedCampaigns.push({\n    ...campaign,\n    audienceQuery,\n    queryParams,\n    processedAt: new Date().toISOString()\n  });\n}\n\nreturn processedCampaigns;"
+      },
+      "id": "process-campaigns",
+      "name": "Process Campaigns",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.audienceQuery }}",
+        "additionalFields": {}
+      },
+      "id": "get-target-audience",
+      "name": "Get Target Audience",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1000, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-3.5-turbo",
+        "messages": {
+          "messageType": "multipleMessages",
+          "multipleMessages": [
+            {
+              "role": "system",
+              "message": "Você é um especialista em copywriting para email marketing da KRYONIX. Crie conteúdo persuasivo e profissional.\n\nTipo de campanha: {{ $('Process Campaigns').first().json.campaign_type }}\nSegmento alvo: {{ $('Process Campaigns').first().json.target_segment }}\nObjetivo: {{ $('Process Campaigns').first().json.objective }}\n\nDiretrizes:\n- Use linguagem persuasiva mas não agressiva\n- Inclua CTA claro e específico\n- Personalize com {{name}} quando apropriado\n- Foque nos benefícios da automação empresarial\n- Mantenha tom profissional mas amigável"
+            },
+            {
+              "role": "user",
+              "message": "Crie um email para esta campanha com assunto e corpo HTML profissional. Template base: {{ $('Process Campaigns').first().json.email_template }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 1000
+        }
+      },
+      "id": "generate-email-content",
+      "name": "Generate Email Content",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1200, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-kryonix",
+          "name": "OpenAI KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Preparar emails personalizados para cada destinatário\nconst audience = $('Get Target Audience').all();\nconst campaignData = $('Process Campaigns').first().json;\nconst aiContent = $('Generate Email Content').first().json.response;\n\n// Extrair subject e body do conteúdo da IA\nconst subjectMatch = aiContent.match(/Subject: (.+)/i);\nconst bodyMatch = aiContent.match(/Body: ([\\s\\S]+)/i);\n\nconst emailSubject = subjectMatch ? subjectMatch[1].trim() : campaignData.subject;\nconst emailBodyTemplate = bodyMatch ? bodyMatch[1].trim() : campaignData.email_template;\n\nconst personalizedEmails = audience.map((recipientData, index) => {\n  const recipient = recipientData.json;\n  \n  // Personalizar conteúdo\n  const personalizedSubject = emailSubject\n    .replace(/{{name}}/g, recipient.name || 'Cliente')\n    .replace(/{{company}}/g, recipient.company || 'sua empresa');\n    \n  const personalizedBody = emailBodyTemplate\n    .replace(/{{name}}/g, recipient.name || 'Cliente')\n    .replace(/{{email}}/g, recipient.email)\n    .replace(/{{company}}/g, recipient.company || 'sua empresa')\n    .replace(/{{phone}}/g, recipient.phone || '');\n  \n  // Gerar HTML completo\n  const fullEmailHTML = `\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>${personalizedSubject}</title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5;\">\n    <div style=\"max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);\">\n        \n        <!-- Header -->\n        <div style=\"background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 20px; text-align: center;\">\n            <h1 style=\"color: white; margin: 0; font-size: 24px;\">🚀 KRYONIX</h1>\n            <p style=\"color: #e0e7ff; margin: 5px 0 0 0;\">Automação Empresarial com IA</p>\n        </div>\n        \n        <!-- Conteúdo -->\n        <div style=\"padding: 30px 20px;\">\n            ${personalizedBody}\n        </div>\n        \n        <!-- CTA Principal -->\n        <div style=\"text-align: center; padding: 20px;\">\n            <a href=\"https://kryonix.com/dashboard?utm_source=email&utm_campaign=${campaignData.id}\" \n               style=\"background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;\">\n                🚀 ACESSAR PLATAFORMA\n            </a>\n        </div>\n        \n        <!-- Footer -->\n        <div style=\"background: #f8fafc; padding: 15px 20px; text-align: center; border-top: 1px solid #e5e7eb;\">\n            <p style=\"margin: 0; color: #6b7280; font-size: 12px;\">\n                KRYONIX - Transformando negócios com tecnologia<br>\n                CEO: Vitor Jayme Fernandes Ferreira | WhatsApp: (17) 9 8180-5327\n            </p>\n            <p style=\"margin: 10px 0 0 0; color: #6b7280; font-size: 11px;\">\n                <a href=\"#\" style=\"color: #6b7280;\">Descadastrar</a> | \n                <a href=\"#\" style=\"color: #6b7280;\">Preferências</a>\n            </p>\n        </div>\n    </div>\n</body>\n</html>`;\n  \n  return {\n    to: recipient.email,\n    name: recipient.name,\n    subject: personalizedSubject,\n    body: fullEmailHTML,\n    campaignId: campaignData.id,\n    recipientId: recipient.id,\n    emailId: `EMAIL_${campaignData.id}_${recipient.id}_${Date.now()}`,\n    scheduledFor: new Date().toISOString()\n  };\n});\n\nreturn personalizedEmails;"
+      },
+      "id": "personalize-emails",
+      "name": "Personalize Emails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "id": "batch-emails",
+      "name": "Batch Emails",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1600, 300]
+    },
+    {
+      "parameters": {
+        "from": "{{ $('Process Campaigns').first().json.from_email || 'marketing@kryonix.com' }}",
+        "to": "{{ $json.to }}",
+        "subject": "{{ $json.subject }}",
+        "emailType": "html",
+        "message": "{{ $json.body }}",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "replyTo": "contato@kryonix.com"
+        }
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1800, 300],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-kryonix",
+          "name": "SMTP KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "email_logs",
+        "columns": "email_id, campaign_id, recipient_email, recipient_name, subject, status, sent_at",
+        "additionalFields": {}
+      },
+      "id": "log-email-sent",
+      "name": "Log Email Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [2000, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aguardar intervalo entre emails para evitar spam\nconst delay = 2000; // 2 segundos entre emails\nawait new Promise(resolve => setTimeout(resolve, delay));\n\nreturn $input.all();"
+      },
+      "id": "email-throttle",
+      "name": "Email Throttle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1800, 450]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "email_campaigns",
+        "updateKey": "id",
+        "columns": "status, sent_count, completed_at",
+        "additionalFields": {}
+      },
+      "id": "update-campaign-status",
+      "name": "Update Campaign Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [2200, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "email-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "email-webhook",
+      "name": "Email Event Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 600],
+      "webhookId": "email-events-kryonix"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar eventos de email (abertura, clique, bounce, etc.)\nconst eventData = $input.first().json;\n\nconst eventType = eventData.event || eventData.type;\nconst emailId = eventData.email_id || eventData.messageId;\nconst recipientEmail = eventData.email || eventData.recipient;\nconst timestamp = eventData.timestamp || new Date().toISOString();\nconst userAgent = eventData.user_agent || '';\nconst ipAddress = eventData.ip || '';\n\n// Mapear tipos de eventos\nconst eventMapping = {\n  'open': 'opened',\n  'click': 'clicked', \n  'bounce': 'bounced',\n  'unsubscribe': 'unsubscribed',\n  'spam': 'spam_complaint',\n  'delivered': 'delivered'\n};\n\nconst normalizedEvent = eventMapping[eventType] || eventType;\n\nreturn {\n  emailId,\n  recipientEmail,\n  eventType: normalizedEvent,\n  timestamp,\n  userAgent,\n  ipAddress,\n  eventData: JSON.stringify(eventData)\n};"
+      },
+      "id": "process-email-event",
+      "name": "Process Email Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 600]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "email_events",
+        "columns": "email_id, recipient_email, event_type, timestamp, user_agent, ip_address, event_data",
+        "additionalFields": {}
+      },
+      "id": "save-email-event",
+      "name": "Save Email Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [600, 600],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "{{ $('Process Email Event').first().json.eventType }}",
+              "rightValue": "clicked",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-click-event",
+      "name": "Is Click Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [800, 600]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO leads (email, source, interest_level, created_at) VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO UPDATE SET interest_level = GREATEST(leads.interest_level, $3), last_interaction = $4",
+        "additionalFields": {}
+      },
+      "id": "create-hot-lead",
+      "name": "Create Hot Lead",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1000, 500],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-kryonix",
+          "name": "PostgreSQL KRYONIX"
+        }
+      },
+      "parameters": {
+        "values": [
+          "{{ $('Process Email Event').first().json.recipientEmail }}",
+          "email_marketing",
+          "90",
+          "{{ $('Process Email Event').first().json.timestamp }}"
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Event processed successfully",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1200, 600]
+    }
+  ],
+  "connections": {
+    "Email Campaign Scheduler": {
+      "main": [
+        [
+          {
+            "node": "Get Scheduled Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scheduled Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Has Campaigns?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Campaigns?": {
+      "main": [
+        [
+          {
+            "node": "Process Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Get Target Audience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Target Audience": {
+      "main": [
+        [
+          {
+            "node": "Generate Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Email Content": {
+      "main": [
+        [
+          {
+            "node": "Personalize Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personalize Emails": {
+      "main": [
+        [
+          {
+            "node": "Batch Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Emails": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Log Email Sent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Throttle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Update Campaign Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Event Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Email Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Email Event": {
+      "main": [
+        [
+          {
+            "node": "Save Email Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Email Event": {
+      "main": [
+        [
+          {
+            "node": "Is Click Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Click Event?": {
+      "main": [
+        [
+          {
+            "node": "Create Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-20T10:00:00.000Z",
+  "updatedAt": "2024-01-20T10:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["kryonix", "email", "marketing"],
+  "triggerCount": 0,
+  "versionId": "1"
+}
